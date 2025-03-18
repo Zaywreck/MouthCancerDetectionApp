@@ -7,7 +7,7 @@ import ModelScreen from '../screens/ModelScreen';
 import DetailsScreen from '../screens/DetailsScreen';
 import AboutScreen from '../screens/AboutScreen';
 import LoginScreen from '../screens/LoginScreen';
-import { TouchableOpacity, Text } from 'react-native';
+import ChatbotSelectionScreen from '../screens/ChatBotSelectionScreen';
 import ChatbotScreen from '../screens/ChatBotScreen';
 
 // Stack ve Navigator Tanımlamaları
@@ -32,7 +32,8 @@ function AppNavigator() {
       <Stack.Screen name="Model" component={ModelScreen} />
       <Stack.Screen name="Detaylar" component={DetailsScreen} />
       <Stack.Screen name="Biz Kimiz" component={AboutScreen} />
-      <Stack.Screen name="ChatBot" component={ChatbotScreen} />
+      <Stack.Screen name="ChatBot" component={ChatbotSelectionScreen} />
+      <Stack.Screen name="Merhaba" component={ChatbotScreen} />
     </Stack.Navigator>
   );
 }

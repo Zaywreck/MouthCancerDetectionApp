@@ -1,4 +1,3 @@
-// MessagesSection.js
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 
@@ -6,7 +5,7 @@ const MessagesSection = ({ messages }) => {
   return (
     <ScrollView contentContainerStyle={styles.messagesContainer}>
       {messages.length === 0 ? (
-        <Text style={styles.noMessagesText}>MAP</Text>
+        <Text style={styles.noMessagesText}>Henüz bir mesaj yok.</Text>
       ) : (
         messages.map((message, index) => (
           <View
