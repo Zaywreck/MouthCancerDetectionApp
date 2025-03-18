@@ -40,6 +40,7 @@ const ModelScreen = () => {
             doctorQualification={doctorQualification}
             setDoctorQualification={setDoctorQualification}
             handleSaveComment={() => alert('Doktor yorumları kaydedildi!')}
+            isDoctor={true}
           />
         </View>
       )}
