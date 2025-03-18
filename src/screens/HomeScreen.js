@@ -31,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('Details')}
+            onPress={() => navigation.navigate('Detaylar')}
           >
             <Text style={styles.cardTitle}>Hastalık Bilgi &rarr;</Text>
             <Text style={styles.cardDescription}>
@@ -40,11 +40,20 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('About')}
+            onPress={() => navigation.navigate('Biz Kimiz')}
           >
             <Text style={styles.cardTitle}>Hakkımızda &rarr;</Text>
             <Text style={styles.cardDescription}>
               Biz kimiz ve bu proje nasıl yapıldı
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate('ChatBot')}
+          >
+            <Text style={styles.cardTitle}>ChatBot &rarr;</Text>
+            <Text style={styles.cardDescription}>
+              Sorularınızı sorabileceğiniz bir sanal doktor
             </Text>
           </TouchableOpacity>
         </View>

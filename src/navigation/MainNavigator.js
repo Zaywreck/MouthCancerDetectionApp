@@ -8,6 +8,7 @@ import DetailsScreen from '../screens/DetailsScreen';
 import AboutScreen from '../screens/AboutScreen';
 import LoginScreen from '../screens/LoginScreen';
 import { TouchableOpacity, Text } from 'react-native';
+import ChatbotScreen from '../screens/ChatBotScreen';
 
 // Stack ve Navigator Tanımlamaları
 const Stack = createStackNavigator();
@@ -29,8 +30,9 @@ function AppNavigator() {
         headerShown: false,
       }} />
       <Stack.Screen name="Model" component={ModelScreen} />
-      <Stack.Screen name="Details" component={DetailsScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
+      <Stack.Screen name="Detaylar" component={DetailsScreen} />
+      <Stack.Screen name="Biz Kimiz" component={AboutScreen} />
+      <Stack.Screen name="ChatBot" component={ChatbotScreen} />
     </Stack.Navigator>
   );
 }
