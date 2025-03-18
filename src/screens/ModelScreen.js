@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Text, View, StyleSheet, Button, Image } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../context/AuthContext'; // Kullanıcı durumu kontrolü için
 import DoctorComments from '../components/DoctorComments'; // Yeni bileşeni dahil ediyoruz
+import ImageUploader from '../components/ImageUploader'; // Yeni bileşeni dahil ediyoruz
 
 const ModelScreen = () => {
   const { isLoggedIn } = useAuth();  // Kullanıcı giriş durumu
@@ -12,97 +12,26 @@ const ModelScreen = () => {
   const [doctorName, setDoctorName] = useState('');
   const [doctorQualification, setDoctorQualification] = useState('');
 
-  useEffect(() => {
-    // Uygulama açıldığında izinleri kontrol et
-    const checkPermissions = async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Resim galerisi izni verilmedi!');
-      }
-
-      const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-      if (cameraStatus.status !== 'granted') {
-        alert('Kamera izni verilmedi!');
-      }
-    };
-
-    checkPermissions();
-  }, []);
-
-  const handleImageUpload = async () => {
-    // Resim seçme işlemine başlamadan önce izin kontrolü
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Resim galerisi izni verilmedi!');
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      // Mocking the model result
-      setModelResult({
-        decision: 'Positive',
-        image: result.assets[0].uri, // Show uploaded image as result for simplicity
-      });
-    }
-  };
-
-  const handleTakePhoto = async () => {
-    // Kamera izni kontrolü
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Kamera izni verilmedi!');
-      return;
-    }
-
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      // Mocking the model result
-      setModelResult({
-        decision: 'Positive',
-        image: result.assets[0].uri, // Show taken photo as result for simplicity
-      });
-    }
-  };
-
-  const handleSaveComment = () => {
-    alert('Doktor yorumları kaydedildi!');
-  };
-
   return (
     <ScrollView style={styles.container}>
       <View style={styles.uploadArea}>
         <Text style={styles.pageTitle}>Yapay Zeka Modeli ile Ağız Kanseri Tespiti</Text>
-        <View style={styles.content}>
-          <View style={styles.imageUploadContainer}>
-            <Text style={styles.sectionTitle}>Resim Yükle</Text>
-            <Button title="Resim Seç" onPress={handleImageUpload} />
-            <Button title="Fotoğraf Çek" onPress={handleTakePhoto} />
-            {image && <Image source={{ uri: image }} style={styles.uploadedImage} />}
-          </View>
 
-          <View style={styles.resultDisplayContainer}>
-            <Text style={styles.sectionTitle}>Sonuçlar</Text>
-            {modelResult?.image && (
-              <Image source={{ uri: modelResult.image }} style={styles.resultImage} />
-            )}
-            {modelResult?.decision && <Text style={styles.decisionText}>Model Kararı: {modelResult.decision}</Text>}
-          </View>
+        {/* ImageUploader bileşenini burada kullanıyoruz */}
+        <ImageUploader image={image} setImage={setImage} setModelResult={setModelResult} />
+
+        {/* Sonuçlar */}
+        <View style={styles.resultDisplayContainer}>
+          <Text style={styles.sectionTitle}>Sonuçlar</Text>
+          {modelResult?.image && (
+            <Image source={{ uri: modelResult.image }} style={styles.resultImage} />
+          )}
+          {modelResult?.decision && <Text style={styles.decisionText}>Model Kararı: {modelResult.decision}</Text>}
         </View>
       </View>
-      <View style={styles.doctorCommentsContainer}>
-        {isLoggedIn && (
+
+      {isLoggedIn && (
+        <View style={styles.doctorCommentsContainer}>
           <DoctorComments
             doctorComments={doctorComments}
             setDoctorComments={setDoctorComments}
@@ -110,10 +39,10 @@ const ModelScreen = () => {
             setDoctorName={setDoctorName}
             doctorQualification={doctorQualification}
             setDoctorQualification={setDoctorQualification}
-            handleSaveComment={handleSaveComment}
+            handleSaveComment={() => alert('Doktor yorumları kaydedildi!')}
           />
-        )}
-      </View>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -122,52 +51,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f0f9ff',
+    backgroundColor: '#F5F9FF', // Softer background color
   },
   uploadArea: {
-    paddingTop: 10,
+    padding: 20,
     borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    boxShadow: '2 4px 6px rgba(0, 0, 0, 0.32)',
-  },
-  doctorCommentsContainer: {
-    padding: 10,
-    marginTop: 20,
-    borderRadius: 8,
-    boxShadow: '2 4px 6px rgba(0, 0, 0, 0.32)',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    marginBottom: 20,
   },
   pageTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
     textAlign: 'center',
-    color: 'black',
-  },
-  content: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    color: '#2B2D42', // Darker text color
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'black',
-  },
-  imageUploadContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  uploadedImage: {
-    width: 200,
-    height: 200,
-    marginTop: 10,
-    borderRadius: 10,
+    marginBottom: 15,
+    color: '#2B2D42',
   },
   resultDisplayContainer: {
-    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   resultImage: {
     width: 200,
@@ -178,7 +89,17 @@ const styles = StyleSheet.create({
   decisionText: {
     fontSize: 16,
     marginTop: 10,
-    color: 'black',
+    color: '#FF4C4C', // Red for the decision text
+  },
+  doctorCommentsContainer: {
+    padding: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 8,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
 });
 
