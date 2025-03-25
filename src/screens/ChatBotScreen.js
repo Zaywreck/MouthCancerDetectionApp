@@ -1,17 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import MessagesSection from '../components/MessagesSection';
 import MessageInput from '../components/MessageInput';
+import axios from 'axios';
+
+// Flask API endpoint (localhost for dev, replace with your server URL for production)
+const API_URL = 'http://192.168.149.136:5000/recommend'; // Flask appınızın çalıştığı adres
 
 const ChatbotScreen = ({ route }) => {
   const { chatbotType } = route.params;
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendMessage = () => {
+  // Welcome mesajını ilk yüklemede ekle
+  useEffect(() => {
+    const welcomeMessage = getWelcomeMessage();
+    setMessages([{ type: 'text', content: welcomeMessage, isBot: true }]);
+  }, []);
+
+  const handleSendMessage = async () => {
     if (inputText.trim()) {
-      setMessages([...messages, { type: 'text', content: inputText }]);
+      // Kullanıcı mesajını ekle
+      const userMessage = { type: 'text', content: inputText, isBot: false };
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
       setInputText('');
+      setIsLoading(true);
+
+      try {
+        // Flask API'ye POST isteği gönder
+        const response = await axios.post(API_URL, {
+          prompt: inputText,
+        });
+
+        // API yanıtını al ve mesajlara ekle
+        const botResponse = response.data.recommendation || 'Bir hata oluştu, lütfen tekrar deneyin.';
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { type: 'text', content: botResponse, isBot: true },
+        ]);
+      } catch (error) {
+        console.error('API hatası:', error);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { type: 'text', content: 'Üzgünüm, bir hata oluştu!', isBot: true },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -25,17 +61,18 @@ const ChatbotScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.chatbotTitle}>{chatbotType === 'disease' ? 'Hastalık Chatbotu' : 'Yemek Tarifi Chatbotu'}</Text>
-      <Text style={styles.welcomeMessage}>{getWelcomeMessage()}</Text>
-
+      <Text style={styles.chatbotTitle}>
+        {chatbotType === 'disease' ? 'Hastalık Chatbotu' : 'Yemek Tarifi Chatbotu'}
+      </Text>
       <View style={styles.messagesContainer}>
         <MessagesSection messages={messages} />
       </View>
-      <View style={styles.inputSection}>
+      <View>
         <MessageInput
           inputText={inputText}
           setInputText={setInputText}
           handleSendMessage={handleSendMessage}
+          isLoading={isLoading}
         />
       </View>
     </View>
@@ -63,15 +100,6 @@ const styles = StyleSheet.create({
   messagesContainer: {
     flex: 1,
     marginBottom: 20,
-  },
-  inputSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 8,
-    marginRight: 10,
   },
 });
 

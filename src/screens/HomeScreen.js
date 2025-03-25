@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, ScrollView } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
   const { logout } = useAuth();
@@ -9,57 +10,69 @@ const HomeScreen = ({ navigation }) => {
     logout();
   };
 
+  const menuItems = [
+    {
+      title: 'Model',
+      description: 'Yapay zeka modelimizi deneyin',
+      icon: 'brain-outline',
+      route: 'Model',
+    },
+    {
+      title: 'Hastalık Bilgi',
+      description: 'Ağız kanseri hakkında bilgi alın',
+      icon: 'information-circle-outline',
+      route: 'Detaylar',
+    },
+    {
+      title: 'Hakkımızda',
+      description: 'Biz kimiz ve projemiz',
+      icon: 'people-outline',
+      route: 'Biz Kimiz',
+    },
+    {
+      title: 'ChatBot',
+      description: 'Sanal doktorunuza sorular sorun',
+      icon: 'chatbubble-ellipses-outline',
+      route: 'ChatBot',
+    },
+  ];
+
   return (
     <ImageBackground
-      source={require('../../assets/images/background.jpg')}
+      source={require('../../assets/images/background.jpg')} // Medikal temalı bir arkaplan önerilir
       style={styles.background}
     >
       <View style={styles.overlay}>
-        <Text style={styles.title}>Teşhis uygulamamıza hoşgeldiniz...</Text>
-        <Text style={styles.description}>
-          Aşağıdaki seçeneklerden birini seçerek devam edebilirsiniz
-        </Text>
-        <View style={styles.grid}>
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate('Model')}
-          >
-            <Text style={styles.cardTitle}>Model &rarr;</Text>
-            <Text style={styles.cardDescription}>
-              Yapay zeka modelimizi deneyebilirsiniz
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Teşhis Uygulaması</Text>
+            <Text style={styles.subtitle}>
+              Sağlığınız için yapay zeka destekli çözümler
             </Text>
+          </View>
+
+          <View style={styles.menuContainer}>
+            {menuItems.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() => navigation.navigate(item.route)}
+              >
+                <Ionicons name={item.icon} size={28} color="#007AFF" style={styles.cardIcon} />
+                <View style={styles.cardTextContainer}>
+                  <Text style={styles.cardTitle}>{item.title}</Text>
+                  <Text style={styles.cardDescription}>{item.description}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#888" />
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={20} color="#fff" style={styles.logoutIcon} />
+            <Text style={styles.logoutText}>Çıkış Yap</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate('Detaylar')}
-          >
-            <Text style={styles.cardTitle}>Hastalık Bilgi &rarr;</Text>
-            <Text style={styles.cardDescription}>
-              Ağız kanseri hakkında detaylı bilgi alabilirsiniz
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate('Biz Kimiz')}
-          >
-            <Text style={styles.cardTitle}>Hakkımızda &rarr;</Text>
-            <Text style={styles.cardDescription}>
-              Biz kimiz ve bu proje nasıl yapıldı
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate('ChatBot')}
-          >
-            <Text style={styles.cardTitle}>ChatBot &rarr;</Text>
-            <Text style={styles.cardDescription}>
-              Sorularınızı sorabileceğiniz bir sanal doktor
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Çıkış Yap</Text>
-        </TouchableOpacity>
+        </ScrollView>
       </View>
     </ImageBackground>
   );
@@ -72,58 +85,81 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', // Hafif şeffaf beyaz katman
+  },
+  container: {
+    flexGrow: 1,
+    padding: 20,
+    justifyContent: 'space-between',
+  },
+  header: {
     alignItems: 'center',
-    padding: 16,
+    marginBottom: 30,
+    paddingTop: 40,
   },
   title: {
-    fontSize: 24,
-    color: 'rgb(81, 121, 255)',
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#003087', // Koyu mavi, medikal bir ton
     textAlign: 'center',
-    marginBottom: 20,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
   },
-  description: {
+  subtitle: {
     fontSize: 16,
+    color: '#666',
     textAlign: 'center',
-    color: 'rgb(0,0,0)',
-    marginBottom: 30,
+    marginTop: 8,
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+  menuContainer: {
+    flex: 1,
     width: '100%',
   },
   card: {
-    width: '45%',
-    padding: 20,
-    marginVertical: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 8,
-    elevation: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  cardIcon: {
+    marginRight: 15,
+  },
+  cardTextContainer: {
+    flex: 1,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 8,
+    color: '#003087',
   },
   cardDescription: {
     fontSize: 14,
-    color: '#555',
+    color: '#666',
+    marginTop: 4,
   },
   logoutButton: {
-    padding: 10,
-    backgroundColor: 'rgb(253, 132, 132)',
-    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FF3B30', // Kırmızı çıkış butonu
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
     marginTop: 20,
+    alignSelf: 'center',
+  },
+  logoutIcon: {
+    marginRight: 8,
   },
   logoutText: {
-    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#fff',
   },
 });
 
