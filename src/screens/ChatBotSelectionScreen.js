@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons'; // Ikonlar için (npm install @ex
 
 const ChatbotSelectionScreen = ({ navigation }) => {
   const handleSelectChatbot = (chatbotType) => {
-    navigation.navigate('Merhaba', { chatbotType });
+    navigation.navigate('ChatBot', { chatbotType });
   };
 
   return (

@@ -1,36 +1,31 @@
-// screens/ModelTestScreen.js
-import React, { useState } from 'react';
-import { ScrollView, Text, View, StyleSheet, Image } from 'react-native';
+// src/screens/ModelTestScreen.js
+import React, { useState, useEffect } from 'react';
+import { ScrollView, Text, View, StyleSheet } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 import ImageUploader from '../components/ImageUploader';
 
 const ModelTestScreen = ({ navigation }) => {
+  const { userType } = useAuth();
   const [image, setImage] = useState(null);
   const [modelResult, setModelResult] = useState(null);
 
   const handleSubmitSuccess = () => {
-    // Fotoğraf gönderildiğinde doktor onay ekranına yönlendir
-    navigation.navigate('DoctorApproval', { image, modelResult });
+    navigation.navigate('Results');
   };
+
+  if (userType === 'doctor') {
+    return null;
+  }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.uploadArea}>
         <Text style={styles.pageTitle}>Yapay Zeka Modeli ile Test</Text>
         <ImageUploader
-          image={image}
           setImage={setImage}
           setModelResult={setModelResult}
-          onSubmitSuccess={handleSubmitSuccess} // Yeni prop
+          onSubmitSuccess={handleSubmitSuccess}
         />
-        <View style={styles.resultDisplayContainer}>
-          <Text style={styles.sectionTitle}>Sonuçlar</Text>
-          {modelResult?.image && (
-            <Image source={{ uri: modelResult.image }} style={styles.resultImage} />
-          )}
-          {modelResult?.decision && (
-            <Text style={styles.decisionText}>Model Kararı: {modelResult.decision}</Text>
-          )}
-        </View>
       </View>
     </ScrollView>
   );
@@ -59,27 +54,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#003087',
     marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 15,
-    color: '#003087',
-  },
-  resultDisplayContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  resultImage: {
-    width: 200,
-    height: 200,
-    marginTop: 10,
-    borderRadius: 10,
-  },
-  decisionText: {
-    fontSize: 16,
-    marginTop: 10,
-    color: '#FF3B30',
   },
 });
 

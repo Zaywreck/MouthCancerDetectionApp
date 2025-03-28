@@ -33,3 +33,9 @@ export const updateRequestStatus = async (requestId, status) => {
     method: 'PUT',
   });
 };
+
+export const getUserUploads = async (userId) => {
+  return apiFetch(`/images/user-uploads?user_id=${userId}`, {
+    method: 'GET',
+  });
+};

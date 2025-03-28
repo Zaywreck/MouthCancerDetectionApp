@@ -4,38 +4,79 @@ import { useAuth } from '../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
-  const { logout } = useAuth();
+  const { logout, userType } = useAuth();
 
   const handleLogout = () => {
     logout();
   };
 
-  const menuItems = [
-    {
-      title: 'Model',
-      description: 'Yapay zeka modelimizi deneyin',
-      icon: 'brain-outline',
-      route: 'ModelSelection',
-    },
-    {
-      title: 'Hastalık Bilgi',
-      description: 'Ağız kanseri hakkında bilgi alın',
-      icon: 'information-circle-outline',
-      route: 'Detaylar',
-    },
-    {
-      title: 'Hakkımızda',
-      description: 'Biz kimiz ve projemiz',
-      icon: 'people-outline',
-      route: 'Biz Kimiz',
-    },
-    {
-      title: 'ChatBot',
-      description: 'Sanal doktorunuza sorular sorun',
-      icon: 'chatbubble-ellipses-outline',
-      route: 'ChatBot',
-    },
-  ];
+  // Role-based menu items
+  const getMenuItems = () => {
+    const commonItems = [
+      {
+        title: 'Hakkımızda',
+        description: 'Biz kimiz ve projemiz',
+        icon: 'people-outline',
+        route: 'About',
+      },
+      {
+        title: 'ChatBot',
+        description: 'Sanal doktorunuza sorular sorun',
+        icon: 'chatbubble-ellipses-outline',
+        route: 'ChatBotSelection',
+      },
+    ];
+
+    const doctorItems = [
+      {
+        title: 'Doktor İstekleri',
+        description: 'Onay bekleyen istekleri görüntüle',
+        icon: 'document-text-outline',
+        route: 'DoctorRequests',
+      },
+      {
+        title: 'Doktor Test',
+        description: 'Modeli test et',
+        icon: 'flask-outline',
+        route: 'DoctorTest',
+      },
+      {
+        title: 'Doktor Onay',
+        description: 'İstekleri onayla veya reddet',
+        icon: 'checkmark-circle-outline',
+        route: 'DoctorApproval',
+      },
+    ];
+
+    const userGuestItems = [
+      {
+        title: 'Model',
+        description: 'Yapay zeka modelimizi deneyin',
+        icon: 'brain-outline',
+        route: 'ModelSelection',
+      },
+      {
+        title: 'Sonuçlarım',
+        description: 'Yüklemelerinizi ve sonuçları görün',
+        icon: 'list-outline',
+        route: 'Results',
+      },
+      {
+        title: 'Hastalık Bilgi',
+        description: 'Ağız kanseri hakkında bilgi alın',
+        icon: 'information-circle-outline',
+        route: 'Details',
+      },
+    ];
+
+    if (userType === 'doctor') {
+      return [...doctorItems, ...commonItems];
+    } else {
+      return [...userGuestItems, ...commonItems];
+    }
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <ImageBackground

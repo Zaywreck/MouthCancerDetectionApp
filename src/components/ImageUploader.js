@@ -1,18 +1,69 @@
 // src/components/ImageUploader.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
 import { uploadImage } from '../services/image';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-const ImageUploader = ({ onSubmitSuccess }) => {
-  const { userId } = useAuth(); // Get userId from context
-  const [image, setImage] = useState(null);
-  const [modelResult, setModelResult] = useState(null);
+const ImageUploader = ({ setImage, setModelResult, onSubmitSuccess, skipSubmit = false }) => {
+  const { userId } = useAuth();
+  const [localImage, setLocalImage] = useState(null); // Local state for preview
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const pickImage = () => {
+    Alert.alert(
+      'Resim Seç',
+      'Bir seçenek belirleyin',
+      [
+        { text: 'Kamera', onPress: () => openCamera() },
+        { text: 'Galeri', onPress: () => openGallery() },
+        { text: 'İptal', style: 'cancel' },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const openCamera = () => {
+    launchCamera({ mediaType: 'photo', quality: 1 }, (response) => {
+      if (response.didCancel) return;
+      if (response.errorCode) {
+        Alert.alert('Hata', 'Kamera açılamadı: ' + response.errorMessage);
+        return;
+      }
+      const uri = response.assets[0].uri;
+      setLocalImage(uri);
+      setImage(uri); // Update parent state
+      // Simulate model result (replace with actual AI model call)
+      const result = { decision: 'Positive', image: uri };
+      setModelResult(result);
+    });
+  };
+
+  const openGallery = () => {
+    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
+      if (response.didCancel) return;
+      if (response.errorCode) {
+        Alert.alert('Hata', 'Galeri açılamadı: ' + response.errorMessage);
+        return;
+      }
+      const uri = response.assets[0].uri;
+      setLocalImage(uri);
+      setImage(uri); // Update parent state
+      // Simulate model result (replace with actual AI model call)
+      const result = { decision: 'Positive', image: uri };
+      setModelResult(result);
+    });
+  };
+
   const handleSubmit = async () => {
-    if (!image) {
+    if (!localImage) {
       Alert.alert('Hata', 'Lütfen bir resim yükleyin!');
+      return;
+    }
+    if (skipSubmit) {
+      // Skip backend submission for doctor testing
+      Alert.alert('Başarılı', 'Model testi tamamlandı!');
+      if (onSubmitSuccess) onSubmitSuccess();
       return;
     }
     if (!userId) {
@@ -21,7 +72,7 @@ const ImageUploader = ({ onSubmitSuccess }) => {
     }
     setIsSubmitting(true);
     try {
-      await uploadImage(userId, image, modelResult?.decision);
+      await uploadImage(userId, localImage, modelResult?.decision);
       setIsSubmitting(false);
       Alert.alert('Başarılı', 'Resim doktor onayına gönderildi!');
       if (onSubmitSuccess) onSubmitSuccess();
@@ -34,16 +85,24 @@ const ImageUploader = ({ onSubmitSuccess }) => {
 
   return (
     <View style={styles.container}>
-      {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
-      <TouchableOpacity
-        onPress={handleSubmit}
-        style={[styles.submitButton, isSubmitting && styles.disabledButton]}
-        disabled={isSubmitting}
-      >
-        <Text style={styles.buttonText}>
-          {isSubmitting ? 'Gönderiliyor...' : 'Doktor Onayına Gönder'}
-        </Text>
-      </TouchableOpacity>
+      {!localImage ? (
+        <TouchableOpacity onPress={pickImage} style={styles.uploadButton}>
+          <Text style={styles.uploadText}>Resim Yükle</Text>
+        </TouchableOpacity>
+      ) : (
+        <>
+          <Image source={{ uri: localImage }} style={styles.imagePreview} />
+          <TouchableOpacity
+            onPress={handleSubmit}
+            style={[styles.submitButton, isSubmitting && styles.disabledButton]}
+            disabled={isSubmitting}
+          >
+            <Text style={styles.buttonText}>
+              {isSubmitting ? 'Gönderiliyor...' : skipSubmit ? 'Test Et' : 'Doktor Onayına Gönder'}
+            </Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 };
@@ -51,6 +110,17 @@ const ImageUploader = ({ onSubmitSuccess }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+  },
+  uploadButton: {
+    backgroundColor: '#007AFF',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  uploadText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
   imagePreview: {
     width: '100%',
