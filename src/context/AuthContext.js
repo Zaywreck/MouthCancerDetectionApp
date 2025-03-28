@@ -1,34 +1,24 @@
 // AuthContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isDoctorLogin, setIsDoctorLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [email, setEmail] = useState('');
+  const [userType, setUserType] = useState(null); // "user" veya "doctor"
 
-  const loginAsDoctor = (email) => {
-    setIsDoctorLogin(true);
-    setEmail(email);
+  const login = (type) => {
     setIsLoggedIn(true);
-  };
-
-  const loginAsGuest = () => {
-    setIsDoctorLogin(false);
-    setEmail('');
-    setIsLoggedIn(true);
+    setUserType(type); // Örnek: login("doctor") veya login("user")
   };
 
   const logout = () => {
-    setIsDoctorLogin(false);
-    setEmail('');
     setIsLoggedIn(false);
-    console.log("logged out succesfully");
+    setUserType(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isDoctorLogin, isLoggedIn, email, loginAsDoctor, loginAsGuest, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, userType, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

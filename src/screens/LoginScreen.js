@@ -3,18 +3,25 @@ import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } fro
 import { useAuth } from '../context/AuthContext';
 
 const LoginScreen = () => {
-  const { loginAsDoctor, loginAsGuest } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isDoctor, setIsDoctor] = useState(true);
+  const [loginType, setLoginType] = useState('doctor'); // "doctor", "user", "guest"
 
-  const handleDoctorLogin = () => {
-    if (!email.includes('@') || password.length < 8) {
-      Alert.alert('Hata', 'Lütfen geçerli bir email ve en az 8 karakterli şifre girin.');
-      return;
+  const handleLogin = () => {
+    if (loginType === 'doctor' || loginType === 'user') {
+      // Doktor veya normal kullanıcı girişi için email ve şifre kontrolü
+      if (!email.includes('@') || password.length < 8) {
+        Alert.alert('Hata', 'Lütfen geçerli bir email ve en az 8 karakterli şifre girin.');
+        return;
+      }
+      login(loginType); // "doctor" veya "user" olarak giriş
+      Alert.alert('Başarılı', `${loginType === 'doctor' ? 'Doktor' : 'Kullanıcı'} olarak giriş yaptınız.`);
+    } else {
+      // Misafir girişi, kimlik doğrulaması gerekmez
+      login('guest');
+      Alert.alert('Başarılı', 'Misafir olarak giriş yaptınız.');
     }
-    loginAsDoctor(email);
-    Alert.alert('Başarılı', 'Doktor olarak giriş yaptınız.');
   };
 
   return (
@@ -25,40 +32,62 @@ const LoginScreen = () => {
 
         <View style={styles.tabContainer}>
           <TouchableOpacity
-            onPress={() => setIsDoctor(true)}
-            style={[styles.tabButton, isDoctor && styles.activeTab]}>
-            <Image source={require('../../assets/doctor-icon.png')} style={styles.icon} />
-            <Text style={[styles.tabText, isDoctor && styles.activeTabText]}>Doktor</Text>
+            onPress={() => setLoginType('doctor')}
+            style={[styles.tabButton, loginType === 'doctor' && styles.activeTab]}
+          >
+            <Image
+              source={require('../../assets/doctor-icon.png')}
+              style={[styles.icon, loginType === 'doctor' && styles.activeIcon]}
+            />
+            <Text style={[styles.tabText, loginType === 'doctor' && styles.activeTabText]}>Doktor</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setIsDoctor(false)}
-            style={[styles.tabButton, !isDoctor && styles.activeTab]}>
-            <Image source={require('../../assets/guest-icon.png')} style={styles.icon} />
-            <Text style={[styles.tabText, !isDoctor && styles.activeTabText]}>Misafir</Text>
+            onPress={() => setLoginType('user')}
+            style={[styles.tabButton, loginType === 'user' && styles.activeTab]}
+          >
+            <Image
+              source={require('../../assets/user-icon.png')}
+              style={[styles.icon, loginType === 'user' && styles.activeIcon]}
+            />
+            <Text style={[styles.tabText, loginType === 'user' && styles.activeTabText]}>Üye</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setLoginType('guest')}
+            style={[styles.tabButton, loginType === 'guest' && styles.activeTab]}
+          >
+            <Image
+              source={require('../../assets/guest-icon.png')}
+              style={[styles.icon, loginType === 'guest' && styles.activeIcon]}
+            />
+            <Text style={[styles.tabText, loginType === 'guest' && styles.activeTabText]}>Misafir</Text>
           </TouchableOpacity>
         </View>
 
-        {isDoctor ? (
+        {loginType === 'doctor' || loginType === 'user' ? (
           <>
             <TextInput
-              placeholder='Email'
+              placeholder="Email"
               value={email}
               onChangeText={setEmail}
               style={styles.input}
+              autoCapitalize="none"
+              keyboardType="email-address"
             />
             <TextInput
-              placeholder='Şifre'
+              placeholder="Şifre"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
               style={styles.input}
             />
-            <TouchableOpacity onPress={handleDoctorLogin} style={styles.loginButton}>
-              <Text style={styles.buttonText}>Doktor Girişi</Text>
+            <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+              <Text style={styles.buttonText}>
+                {loginType === 'doctor' ? 'Doktor Girişi' : 'Kullanıcı Girişi'}
+              </Text>
             </TouchableOpacity>
           </>
         ) : (
-          <TouchableOpacity onPress={loginAsGuest} style={styles.loginButton}>
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             <Text style={styles.buttonText}>Misafir Olarak Devam Et</Text>
           </TouchableOpacity>
         )}
@@ -72,27 +101,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f0f9ff',
+    backgroundColor: '#F5F7FA', // Consistent with other screens
   },
   loginArea: {
-    borderColor: 'rgba(0, 51, 102, 0.1)',
-    borderWidth: 1,
     padding: 20,
-    borderRadius: 8,
-    boxShadow: '2 4px 6px rgba(0, 0, 0, 0.32)',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
   header: {
     fontSize: 28,
     textAlign: 'center',
     marginBottom: 10,
     fontWeight: 'bold',
-    // light blue color
-    color: '#2b7fff',
+    color: '#003087', // Dark blue from other screens
   },
   subHeader: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#666',
+    color: '#666', // Gray for secondary text
     marginBottom: 20,
   },
   tabContainer: {
@@ -105,45 +136,55 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
     borderRadius: 8,
-    margin: 5,
+    marginHorizontal: 5,
     borderWidth: 1,
     borderColor: '#ccc',
   },
   activeTab: {
-    backgroundColor: '#2b7fff',
-    borderColor: '#005bb5',
-  },
-  activeTabText: {
-    color: 'white',
+    backgroundColor: '#007AFF', // Matches button/icon color from other screens
+    borderColor: '#005BB5',
   },
   tabText: {
     fontSize: 16,
     color: '#333',
     marginTop: 5,
   },
+  activeTabText: {
+    color: '#fff',
+  },
   icon: {
     width: 24,
     height: 24,
-    tintColor: '#333',
+    tintColor: '#333', // Default icon color
+  },
+  activeIcon: {
+    tintColor: '#fff', // White when active
   },
   input: {
     borderWidth: 1,
     padding: 12,
     borderRadius: 8,
     marginBottom: 15,
-    borderColor: '#ccc',
+    borderColor: '#B0BEC5',
     backgroundColor: '#fff',
+    fontSize: 16,
   },
   loginButton: {
-    backgroundColor: '#2b7fff',
+    backgroundColor: '#007AFF', // Matches other buttons
     padding: 16,
     alignItems: 'center',
     borderRadius: 8,
     marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 18,
+    fontWeight: '600',
   },
 });
 

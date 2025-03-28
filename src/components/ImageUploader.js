@@ -1,11 +1,12 @@
+// components/ImageUploader.js
 import React, { useState } from 'react';
 import { View, Text, Button, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-const ImageUploader = ({ image, setImage, setModelResult }) => {
-  const [loading, setLoading] = useState(false); // Yükleniyor durumu
-  const [submitted, setSubmitted] = useState(false); // Gönderildi durumu
-  const [isSubmitting, setIsSubmitting] = useState(false); // API'ye gönderme işlemi durumu
+const ImageUploader = ({ image, setImage, setModelResult, onSubmitSuccess }) => {
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleImageUpload = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -14,10 +15,10 @@ const ImageUploader = ({ image, setImage, setModelResult }) => {
       return;
     }
 
-    setLoading(true); // Yükleme başladığını belirtiyoruz
+    setLoading(true);
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, // Düzgün kullanım
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 1,
       });
@@ -25,18 +26,18 @@ const ImageUploader = ({ image, setImage, setModelResult }) => {
       if (!result.canceled) {
         setImage(result.assets[0].uri);
         setModelResult({
-          decision: 'Positive', // Örnek model sonucu
+          decision: 'Positive', // Örnek (API ile değiştirilecek)
           image: result.assets[0].uri,
         });
-        setSubmitted(false); // Resim seçildikten sonra gönder butonunu etkinleştir
+        setSubmitted(false);
       } else {
         alert('Resim seçimi iptal edildi');
       }
     } catch (error) {
-      console.error("Error while picking image:", error);
+      console.error('Error while picking image:', error);
       alert('Resim yükleme hatası!');
     } finally {
-      setLoading(false); // Yükleme işlemi bitti
+      setLoading(false);
     }
   };
 
@@ -57,15 +58,15 @@ const ImageUploader = ({ image, setImage, setModelResult }) => {
       if (!result.canceled) {
         setImage(result.assets[0].uri);
         setModelResult({
-          decision: 'Positive', // Örnek model sonucu
+          decision: 'Positive', // Örnek (API ile değiştirilecek)
           image: result.assets[0].uri,
         });
-        setSubmitted(false); // Fotoğraf çekildikten sonra gönder butonunu etkinleştir
+        setSubmitted(false);
       } else {
         alert('Fotoğraf çekme iptal edildi');
       }
     } catch (error) {
-      console.error("Error while taking photo:", error);
+      console.error('Error while taking photo:', error);
       alert('Fotoğraf çekme hatası!');
     } finally {
       setLoading(false);
@@ -77,51 +78,45 @@ const ImageUploader = ({ image, setImage, setModelResult }) => {
       alert('Lütfen bir resim yükleyin!');
       return;
     }
-    
-    setIsSubmitting(true); // Gönderme işlemine başla
 
+    setIsSubmitting(true);
     try {
-      // Burada API'ye gönderme işlemi yapılabilir.
-      // Örnek: await api.uploadImage(image);
-
-      // Simülasyon olarak 2 saniye bekliyoruz
+      // API'ye gönderme simülasyonu
       setTimeout(() => {
-        setIsSubmitting(false); // İşlem tamamlandı
-        setSubmitted(true); // Gönderim tamamlandı
-        alert('Resim başarıyla gönderildi!');
+        setIsSubmitting(false);
+        setSubmitted(true);
+        alert('Resim doktor onayına gönderildi!');
+        if (onSubmitSuccess) onSubmitSuccess(); // Doktor onay ekranına yönlendirme
       }, 2000);
     } catch (error) {
-      console.error("Error while submitting image:", error);
+      console.error('Error while submitting image:', error);
       alert('Resim gönderme hatası!');
-      setIsSubmitting(false); // Hata durumunda işlemi sonlandır
+      setIsSubmitting(false);
     }
   };
 
   return (
     <View style={styles.imageUploadContainer}>
       <Text style={styles.sectionTitle}>Resim Yükle</Text>
-      <Button title="Resim Seç" onPress={handleImageUpload} />
-      <Button title="Fotoğraf Çek" onPress={handleTakePhoto} />
+      <Button title="Resim Seç" onPress={handleImageUpload} disabled={loading || isSubmitting} />
+      <Button title="Fotoğraf Çek" onPress={handleTakePhoto} disabled={loading || isSubmitting} />
       
-      {loading && <ActivityIndicator size="large" color="#FF4C4C" style={styles.loadingIndicator} />}
+      {loading && <ActivityIndicator size="large" color="#007AFF" style={styles.loadingIndicator} />}
       
       {image && !loading && !submitted && (
         <Image source={{ uri: image }} style={styles.uploadedImage} />
       )}
 
-      {/* Gönder butonunu ekliyoruz */}
       {image && !submitted && !isSubmitting && (
-        <Button title="Gönder" onPress={handleSubmit} />
+        <Button title="Doktor Onayına Gönder" onPress={handleSubmit} />
       )}
 
-      {/* Yükleniyor göstergesi */}
       {isSubmitting && (
-        <ActivityIndicator size="large" color="#FF4C4C" style={styles.loadingIndicator} />
+        <ActivityIndicator size="large" color="#007AFF" style={styles.loadingIndicator} />
       )}
 
-      {/* Gönderildikten sonra başarı mesajı */}
       {submitted && !isSubmitting && (
-        <Text style={styles.submittedText}>Resim başarıyla gönderildi!</Text>
+        <Text style={styles.submittedText}>Resim doktor onayına gönderildi!</Text>
       )}
     </View>
   );
@@ -129,16 +124,15 @@ const ImageUploader = ({ image, setImage, setModelResult }) => {
 
 const styles = StyleSheet.create({
   imageUploadContainer: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginBottom: 15,
-    color: '#2B2D42',
+    color: '#003087',
   },
   uploadedImage: {
     width: 200,
@@ -152,7 +146,7 @@ const styles = StyleSheet.create({
   submittedText: {
     marginTop: 10,
     fontSize: 16,
-    color: 'green',
+    color: '#007AFF',
   },
 });
 

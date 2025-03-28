@@ -15,7 +15,7 @@ const HomeScreen = ({ navigation }) => {
       title: 'Model',
       description: 'Yapay zeka modelimizi deneyin',
       icon: 'brain-outline',
-      route: 'Model',
+      route: 'ModelSelection',
     },
     {
       title: 'Hastalık Bilgi',
