@@ -1,25 +1,31 @@
+// src/screens/LoginScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { loginUser } from '../services/auth'; // Import service
 
 const LoginScreen = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginType, setLoginType] = useState('doctor'); // "doctor", "user", "guest"
+  const [loginType, setLoginType] = useState('doctor');
 
-  const handleLogin = () => {
+  // Inside handleLogin in LoginScreen.js
+  const handleLogin = async () => {
     if (loginType === 'doctor' || loginType === 'user') {
-      // Doktor veya normal kullanıcı girişi için email ve şifre kontrolü
       if (!email.includes('@') || password.length < 8) {
         Alert.alert('Hata', 'Lütfen geçerli bir email ve en az 8 karakterli şifre girin.');
         return;
       }
-      login(loginType); // "doctor" veya "user" olarak giriş
-      Alert.alert('Başarılı', `${loginType === 'doctor' ? 'Doktor' : 'Kullanıcı'} olarak giriş yaptınız.`);
+      try {
+        const data = await loginUser(email, password);
+        login(data.user_type, data.id); // Pass userId to context
+        Alert.alert('Başarılı', `${loginType === 'doctor' ? 'Doktor' : 'Kullanıcı'} olarak giriş yaptınız.`);
+      } catch (error) {
+        Alert.alert('Hata', error.message || 'Giriş başarısız.');
+      }
     } else {
-      // Misafir girişi, kimlik doğrulaması gerekmez
-      login('guest');
+      login('guest', null); // No userId for guest
       Alert.alert('Başarılı', 'Misafir olarak giriş yaptınız.');
     }
   };
@@ -49,7 +55,7 @@ const LoginScreen = () => {
               source={require('../../assets/user-icon.png')}
               style={[styles.icon, loginType === 'user' && styles.activeIcon]}
             />
-            <Text style={[styles.tabText, loginType === 'user' && styles.activeTabText]}>Üye</Text>
+            <Text style={[styles.tabText, loginType === 'user' && styles.activeTabText]}>Kullanıcı</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setLoginType('guest')}
@@ -82,7 +88,7 @@ const LoginScreen = () => {
             />
             <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
               <Text style={styles.buttonText}>
-                {loginType === 'doctor' ? 'Doktor Girişi' : 'Üye Girişi'}
+                {loginType === 'doctor' ? 'Doktor Girişi' : 'Kullanıcı Girişi'}
               </Text>
             </TouchableOpacity>
           </>
@@ -96,12 +102,13 @@ const LoginScreen = () => {
   );
 };
 
+// Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#F5F7FA', // Consistent with other screens
+    backgroundColor: '#F5F7FA',
   },
   loginArea: {
     padding: 20,
@@ -118,12 +125,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
     fontWeight: 'bold',
-    color: '#003087', // Dark blue from other screens
+    color: '#003087',
   },
   subHeader: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#666', // Gray for secondary text
+    color: '#666',
     marginBottom: 20,
   },
   tabContainer: {
@@ -141,7 +148,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   activeTab: {
-    backgroundColor: '#007AFF', // Matches button/icon color from other screens
+    backgroundColor: '#007AFF',
     borderColor: '#005BB5',
   },
   tabText: {
@@ -155,10 +162,10 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
-    tintColor: '#333', // Default icon color
+    tintColor: '#333',
   },
   activeIcon: {
-    tintColor: '#fff', // White when active
+    tintColor: '#fff',
   },
   input: {
     borderWidth: 1,
@@ -170,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginButton: {
-    backgroundColor: '#007AFF', // Matches other buttons
+    backgroundColor: '#007AFF',
     padding: 16,
     alignItems: 'center',
     borderRadius: 8,

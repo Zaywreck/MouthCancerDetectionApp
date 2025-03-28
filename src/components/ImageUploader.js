@@ -1,152 +1,81 @@
-// components/ImageUploader.js
+// src/components/ImageUploader.js
 import React, { useState } from 'react';
-import { View, Text, Button, Image, StyleSheet, ActivityIndicator } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { View, Text, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { uploadImage } from '../services/image';
 
-const ImageUploader = ({ image, setImage, setModelResult, onSubmitSuccess }) => {
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+const ImageUploader = ({ onSubmitSuccess }) => {
+  const { userId } = useAuth(); // Get userId from context
+  const [image, setImage] = useState(null);
+  const [modelResult, setModelResult] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleImageUpload = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Resim galerisi izni verilmedi!');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        setImage(result.assets[0].uri);
-        setModelResult({
-          decision: 'Positive', // Örnek (API ile değiştirilecek)
-          image: result.assets[0].uri,
-        });
-        setSubmitted(false);
-      } else {
-        alert('Resim seçimi iptal edildi');
-      }
-    } catch (error) {
-      console.error('Error while picking image:', error);
-      alert('Resim yükleme hatası!');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTakePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Kamera izni verilmedi!');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      let result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        setImage(result.assets[0].uri);
-        setModelResult({
-          decision: 'Positive', // Örnek (API ile değiştirilecek)
-          image: result.assets[0].uri,
-        });
-        setSubmitted(false);
-      } else {
-        alert('Fotoğraf çekme iptal edildi');
-      }
-    } catch (error) {
-      console.error('Error while taking photo:', error);
-      alert('Fotoğraf çekme hatası!');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async () => {
     if (!image) {
-      alert('Lütfen bir resim yükleyin!');
+      Alert.alert('Hata', 'Lütfen bir resim yükleyin!');
       return;
     }
-
+    if (!userId) {
+      Alert.alert('Hata', 'Kullanıcı kimliği bulunamadı. Lütfen giriş yapın.');
+      return;
+    }
     setIsSubmitting(true);
     try {
-      // API'ye gönderme simülasyonu
-      setTimeout(() => {
-        setIsSubmitting(false);
-        setSubmitted(true);
-        alert('Resim doktor onayına gönderildi!');
-        if (onSubmitSuccess) onSubmitSuccess(); // Doktor onay ekranına yönlendirme
-      }, 2000);
+      await uploadImage(userId, image, modelResult?.decision);
+      setIsSubmitting(false);
+      Alert.alert('Başarılı', 'Resim doktor onayına gönderildi!');
+      if (onSubmitSuccess) onSubmitSuccess();
     } catch (error) {
-      console.error('Error while submitting image:', error);
-      alert('Resim gönderme hatası!');
+      console.error('Error submitting image:', error);
+      Alert.alert('Hata', error.message || 'Resim gönderme hatası!');
       setIsSubmitting(false);
     }
   };
 
   return (
-    <View style={styles.imageUploadContainer}>
-      <Text style={styles.sectionTitle}>Resim Yükle</Text>
-      <Button title="Resim Seç" onPress={handleImageUpload} disabled={loading || isSubmitting} />
-      <Button title="Fotoğraf Çek" onPress={handleTakePhoto} disabled={loading || isSubmitting} />
-      
-      {loading && <ActivityIndicator size="large" color="#007AFF" style={styles.loadingIndicator} />}
-      
-      {image && !loading && !submitted && (
-        <Image source={{ uri: image }} style={styles.uploadedImage} />
-      )}
-
-      {image && !submitted && !isSubmitting && (
-        <Button title="Doktor Onayına Gönder" onPress={handleSubmit} />
-      )}
-
-      {isSubmitting && (
-        <ActivityIndicator size="large" color="#007AFF" style={styles.loadingIndicator} />
-      )}
-
-      {submitted && !isSubmitting && (
-        <Text style={styles.submittedText}>Resim doktor onayına gönderildi!</Text>
-      )}
+    <View style={styles.container}>
+      {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+      <TouchableOpacity
+        onPress={handleSubmit}
+        style={[styles.submitButton, isSubmitting && styles.disabledButton]}
+        disabled={isSubmitting}
+      >
+        <Text style={styles.buttonText}>
+          {isSubmitting ? 'Gönderiliyor...' : 'Doktor Onayına Gönder'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  imageUploadContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  container: {
+    padding: 20,
+  },
+  imagePreview: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
     marginBottom: 20,
   },
-  sectionTitle: {
+  submitButton: {
+    backgroundColor: '#007AFF',
+    padding: 16,
+    alignItems: 'center',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  disabledButton: {
+    backgroundColor: '#B0BEC5',
+  },
+  buttonText: {
+    color: '#fff',
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 15,
-    color: '#003087',
-  },
-  uploadedImage: {
-    width: 200,
-    height: 200,
-    marginTop: 10,
-    borderRadius: 10,
-  },
-  loadingIndicator: {
-    marginTop: 20,
-  },
-  submittedText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#007AFF',
   },
 });
 
