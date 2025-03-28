@@ -1,101 +1,61 @@
-// screens/DoctorRequestsScreen.js
-import React, { useState } from 'react';
-import { ScrollView, Text, View, StyleSheet, Image } from 'react-native';
-import DoctorComments from '../components/DoctorComments';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { getDoctorRequests } from '../services/image'; // Servis fonksiyonu
 
-const DoctorRequestsScreen = ({ route }) => {
-  const { image, modelResult } = route.params || {}; 
-  const [doctorComments, setDoctorComments] = useState('');
-  const [doctorName, setDoctorName] = useState('');
-  const [doctorQualification, setDoctorQualification] = useState('');
+const DoctorRequestsScreen = () => {
+  const [requests, setRequests] = useState([]);
+  const navigation = useNavigation();
 
-  const handleSaveComment = () => {
-    alert('Doktor yorumları kaydedildi!');
-  };
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const data = await getDoctorRequests();
+        data.map((request) => {
+          request.file_path = request.file_path.replace("uploads\\", "");
+        });
+        console.log('Requests:', data);
+        setRequests(data);
+      } catch (error) {
+        console.error('Error fetching requests:', error);
+      }
+    };
+    fetchRequests();
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.requestArea}>
-        <Text style={styles.pageTitle}>Doktor Talepleri</Text>
-        {image ? (
-          <>
-            <Image source={{ uri: image }} style={styles.requestImage} />
-            <Text style={styles.decisionText}>Model Kararı: {modelResult?.decision || 'Bilinmiyor'}</Text>
-          </>
-        ) : (
-          <Text style={styles.noRequestText}>Henüz bir talep yok.</Text>
-        )}
-      </View>
-      {image && (
-        <View style={styles.commentsContainer}>
-          <DoctorComments
-            doctorComments={doctorComments}
-            setDoctorComments={setDoctorComments}
-            doctorName={doctorName}
-            setDoctorName={setDoctorName}
-            doctorQualification={doctorQualification}
-            setDoctorQualification={setDoctorQualification}
-            handleSaveComment={handleSaveComment}
-            isDoctor={true}
-          />
-        </View>
+      <Text style={styles.pageTitle}>Doktor Talepleri</Text>
+      {requests.length > 0 ? (
+        requests.map((request) => (
+          <TouchableOpacity
+            key={request.id}
+            style={styles.requestCard}
+            onPress={() => navigation.navigate('DoctorApproval', { requestId: request.id })}
+          >
+            <Image source={{ uri: `http://192.168.1.108:8000/uploads/${request.file_path}` }} style={styles.thumbnail} />
+            <View style={styles.info}>
+              <Text style={styles.username}>Kullanıcı ID: {request.user_id}</Text>
+              <Text style={styles.date}>Yükleme Tarihi: {new Date(request.uploaded_at).toLocaleString()}</Text>
+            </View>
+          </TouchableOpacity>
+        ))
+      ) : (
+        <Text style={styles.noRequestText}>Henüz bir talep yok.</Text>
       )}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#F5F7FA',
-  },
-  requestArea: {
-    padding: 20,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    marginBottom: 20,
-  },
-  pageTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#003087',
-    marginBottom: 20,
-  },
-  requestImage: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center',
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  decisionText: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#FF3B30',
-    marginBottom: 10,
-  },
-  noRequestText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-  commentsContainer: {
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
+  container: { flex: 1, padding: 16, backgroundColor: '#F5F7FA' },
+  pageTitle: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', color: '#003087', marginBottom: 20 },
+  requestCard: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 8, padding: 10, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3 },
+  thumbnail: { width: 60, height: 60, borderRadius: 8 },
+  info: { flex: 1, paddingHorizontal: 10 },
+  username: { fontSize: 14, fontWeight: '600', color: '#003087' },
+  date: { fontSize: 14, color: '#666', marginTop: 5 },
+  noRequestText: { fontSize: 16, color: '#666', textAlign: 'center' },
 });
 
 export default DoctorRequestsScreen;

@@ -11,7 +11,7 @@ const ResultsScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (userType === 'doctor') {
-      navigation.navigate('Home'); // Redirect doctors to Home
+      navigation.navigate('Home');
     } else if (userId) {
       fetchUploads();
     }
@@ -20,6 +20,11 @@ const ResultsScreen = ({ navigation }) => {
   const fetchUploads = async () => {
     try {
       const data = await getUserUploads(userId);
+      data.map((item) => {
+        item.file_path = item.file_path.replace('uploads\\', '');
+        return item;
+      });
+      console.log('Uploads:', data);
       setUploads(data);
     } catch (error) {
       console.error('Error fetching uploads:', error);
@@ -27,7 +32,7 @@ const ResultsScreen = ({ navigation }) => {
   };
 
   if (userType === 'doctor') {
-    return null; // Prevent rendering while redirecting
+    return null;
   }
 
   return (
@@ -44,24 +49,9 @@ const ResultsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#F5F7FA',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#003087',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 20,
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#F5F7FA' },
+  header: { fontSize: 24, fontWeight: 'bold', color: '#003087', textAlign: 'center', marginBottom: 20 },
+  emptyText: { fontSize: 16, color: '#666', textAlign: 'center', marginTop: 20 },
 });
 
 export default ResultsScreen;

@@ -1,4 +1,4 @@
-// screens/DoctorTestScreen.js
+// src/screens/DoctorTestScreen.js
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet, Image } from 'react-native';
 import ImageUploader from '../components/ImageUploader';
@@ -11,7 +11,11 @@ const DoctorTestScreen = () => {
     <ScrollView style={styles.container}>
       <View style={styles.uploadArea}>
         <Text style={styles.pageTitle}>Doktorlar için Model Testi</Text>
-        <ImageUploader image={image} setImage={setImage} setModelResult={setModelResult} />
+        <ImageUploader
+          setImage={setImage}
+          setModelResult={setModelResult}
+          skipSubmit={true} // No backend submission
+        />
         <View style={styles.resultDisplayContainer}>
           <Text style={styles.sectionTitle}>Sonuçlar</Text>
           {modelResult?.image && (
@@ -23,7 +27,7 @@ const DoctorTestScreen = () => {
         </View>
       </View>
     </ScrollView>
-  );    
+  );
 };
 
 const styles = StyleSheet.create({

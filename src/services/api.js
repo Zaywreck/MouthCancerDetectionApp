@@ -5,16 +5,20 @@ const apiFetch = async (endpoint, options = {}) => {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
       ...options.headers,
+      'Content-Type': 'application/json',
     },
   });
 
-  const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.detail || 'API request failed');
+    const errorText = await response.text(); // Sunucudan dönen hata mesajını al
+    console.error('API error response:', errorText);
+    throw new Error(`HTTP error! Status: ${response.status}, Body: ${errorText}`);
   }
-  return data;
+
+  return response.json();
 };
+
+
 
 export default apiFetch;

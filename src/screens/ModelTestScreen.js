@@ -1,21 +1,14 @@
 // src/screens/ModelTestScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet } from 'react-native';
-import { useAuth } from '../context/AuthContext';
 import ImageUploader from '../components/ImageUploader';
 
 const ModelTestScreen = ({ navigation }) => {
-  const { userType } = useAuth();
   const [image, setImage] = useState(null);
-  const [modelResult, setModelResult] = useState(null);
 
   const handleSubmitSuccess = () => {
     navigation.navigate('Results');
   };
-
-  if (userType === 'doctor') {
-    return null;
-  }
 
   return (
     <ScrollView style={styles.container}>
@@ -23,7 +16,6 @@ const ModelTestScreen = ({ navigation }) => {
         <Text style={styles.pageTitle}>Yapay Zeka Modeli ile Test</Text>
         <ImageUploader
           setImage={setImage}
-          setModelResult={setModelResult}
           onSubmitSuccess={handleSubmitSuccess}
         />
       </View>

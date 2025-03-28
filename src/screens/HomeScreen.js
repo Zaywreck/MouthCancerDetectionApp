@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
-  const { logout, userType } = useAuth();
+  const { logout, userType,userId } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -39,13 +39,7 @@ const HomeScreen = ({ navigation }) => {
         description: 'Modeli test et',
         icon: 'flask-outline',
         route: 'DoctorTest',
-      },
-      {
-        title: 'Doktor Onay',
-        description: 'İstekleri onayla veya reddet',
-        icon: 'checkmark-circle-outline',
-        route: 'DoctorApproval',
-      },
+      }
     ];
 
     const userGuestItems = [
@@ -108,7 +102,9 @@ const HomeScreen = ({ navigation }) => {
               </TouchableOpacity>
             ))}
           </View>
-
+          <Text style={styles.subtitle}>
+            Kullanıcı Id/Tip : {userId} / {userType}
+          </Text>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={20} color="#fff" style={styles.logoutIcon} />
             <Text style={styles.logoutText}>Çıkış Yap</Text>

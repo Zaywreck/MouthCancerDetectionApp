@@ -12,12 +12,14 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(true);
     setUserType(type);
     setUserId(id);
+    console.log('Logged in as', type, 'with ID', id);
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setUserType(null);
     setUserId(null);
+    console.log('Logged out');
   };
 
   return (

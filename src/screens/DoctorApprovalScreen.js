@@ -1,54 +1,88 @@
-// screens/DoctorApprovalScreen.js
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { getImageUploadById, updateRequestStatus } from '../services/image';
 
-const DoctorApprovalScreen = ({ route }) => {
-  const { image, modelResult } = route.params || {};
+const DoctorApprovalScreen = () => {
+  const route = useRoute();
+  const { requestId } = route.params;
+  const [request, setRequest] = useState(null);
+  const [doctorComment, setDoctorComment] = useState('');
+
+  useEffect(() => {
+    const fetchRequest = async () => {
+      try {
+        const data = await getImageUploadById(requestId);
+        data.file_path = data.file_path.replace("uploads\\", "");
+        console.log('Request:', data);
+        setRequest(data);
+      } catch (error) {
+        console.error('Error fetching request:', error);
+      }
+    };
+    fetchRequest();
+  }, [requestId]);
+
+  const handleApprove = async () => {
+    try {
+      await updateRequestStatus(requestId, 'approved', doctorComment);
+      alert('Talep onaylandı!');
+    } catch (error) {
+      console.error('Error approving request:', error);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await updateRequestStatus(requestId, 'rejected', doctorComment);
+      alert('Talep reddedildi!');
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+    }
+  };
+
+  if (!request) return <Text>Yükleniyor...</Text>;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Doktor Onayı Bekleniyor</Text>
-      {image && (
-        <>
-          <Image source={{ uri: image }} style={styles.image} />
-          <Text style={styles.decisionText}>Model Kararı: {modelResult?.decision || 'Bilinmiyor'}</Text>
-        </>
-      )}
-      <Text style={styles.infoText}>Resminiz doktor onayı için gönderildi. Lütfen bekleyin.</Text>
-    </View>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled" // Klavyeyi kapatmak için eklenen özellik
+    >
+      <Text style={styles.pageTitle}>Talep Detayı</Text>
+      <Image source={{ uri: `http://192.168.1.108:8000/uploads/${request.file_path}` }} style={styles.fullImage} />
+      <Text style={styles.modelResult}>Model Sonucu: {request.model_result || 'Bilinmiyor'}</Text>
+      <Text style={styles.modelResult}>Kullanıcı ID: {request.user_id}</Text>
+      <Text style={styles.modelResult}>Talep Id: {request.id}</Text>
+      <Text style={styles.modelResult}>Yükleme Tarihi: {new Date(request.uploaded_at).toLocaleString()}</Text>
+      <TextInput
+        style={styles.commentInput}
+        placeholder="Yorumunuzu buraya yazın"
+        value={doctorComment}
+        onChangeText={setDoctorComment}
+        multiline
+      />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.approveButton} onPress={handleApprove}>
+          <Text style={styles.buttonText}>Onayla</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.rejectButton} onPress={handleReject}>
+          <Text style={styles.buttonText}>Reddet</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F7FA',
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#003087',
-    marginBottom: 20,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  decisionText: {
-    fontSize: 16,
-    color: '#FF3B30',
-    marginBottom: 20,
-  },
-  infoText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
+  container: { flexGrow: 1, padding: 16, backgroundColor: '#F5FAFA' }, // flex yerine flexGrow kullanıldı
+  pageTitle: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', color: '#003087', marginBottom: 20 },
+  fullImage: { width: '100%', height: 300, borderRadius: 8, marginBottom: 20 },
+  modelResult: { fontSize: 16, color: '#666', marginBottom: 10 },
+  commentInput: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, height: 100, textAlignVertical: 'top', marginBottom: 20 },
+  buttonContainer: { flexDirection: 'row', justifyContent: 'space-around' },
+  approveButton: { backgroundColor: '#28A745', padding: 12, borderRadius: 8 },
+  rejectButton: { backgroundColor: '#DC3545', padding: 12, borderRadius: 8 },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
 });
 
 export default DoctorApprovalScreen;

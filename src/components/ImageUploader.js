@@ -3,14 +3,28 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { uploadImage } from '../services/image';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
-const ImageUploader = ({ setImage, setModelResult, onSubmitSuccess, skipSubmit = false }) => {
-  const { userId } = useAuth();
-  const [localImage, setLocalImage] = useState(null); // Local state for preview
+const ImageUploader = ({ setImage, onSubmitSuccess, skipSubmit = false, setModelResult }) => {
+  const { userId, userType } = useAuth();
+  const [localImage, setLocalImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const requestPermissions = async () => {
+    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (cameraStatus !== 'granted' || galleryStatus !== 'granted') {
+      Alert.alert('Hata', 'Kamera veya galeri izni verilmedi!');
+      return false;
+    }
+    return true;
+  };
+
   const pickImage = () => {
+    if (userType === 'guest') {
+      Alert.alert('Kayıt Olun', 'Fotoğraf yüklemek için kayıt olmanız gerekmektedir.');
+      return;
+    }
     Alert.alert(
       'Resim Seç',
       'Bir seçenek belirleyin',
@@ -23,36 +37,44 @@ const ImageUploader = ({ setImage, setModelResult, onSubmitSuccess, skipSubmit =
     );
   };
 
-  const openCamera = () => {
-    launchCamera({ mediaType: 'photo', quality: 1 }, (response) => {
-      if (response.didCancel) return;
-      if (response.errorCode) {
-        Alert.alert('Hata', 'Kamera açılamadı: ' + response.errorMessage);
-        return;
-      }
-      const uri = response.assets[0].uri;
-      setLocalImage(uri);
-      setImage(uri); // Update parent state
-      // Simulate model result (replace with actual AI model call)
-      const result = { decision: 'Positive', image: uri };
-      setModelResult(result);
+  const openCamera = async () => {
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
     });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setLocalImage(uri);
+      setImage(uri);
+      if (skipSubmit && setModelResult) {
+        const modelResult = { decision: 'Positive', image: uri };
+        setModelResult(modelResult);
+      }
+    }
   };
 
-  const openGallery = () => {
-    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
-      if (response.didCancel) return;
-      if (response.errorCode) {
-        Alert.alert('Hata', 'Galeri açılamadı: ' + response.errorMessage);
-        return;
-      }
-      const uri = response.assets[0].uri;
-      setLocalImage(uri);
-      setImage(uri); // Update parent state
-      // Simulate model result (replace with actual AI model call)
-      const result = { decision: 'Positive', image: uri };
-      setModelResult(result);
+  const openGallery = async () => {
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
     });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setLocalImage(uri);
+      setImage(uri);
+      if (skipSubmit && setModelResult) {
+        const modelResult = { decision: 'Positive', image: uri };
+        setModelResult(modelResult);
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -60,8 +82,11 @@ const ImageUploader = ({ setImage, setModelResult, onSubmitSuccess, skipSubmit =
       Alert.alert('Hata', 'Lütfen bir resim yükleyin!');
       return;
     }
+    if (userType === 'guest') {
+      Alert.alert('Kayıt Olun', 'Fotoğraf yüklemek için kayıt olmanız gerekmektedir.');
+      return;
+    }
     if (skipSubmit) {
-      // Skip backend submission for doctor testing
       Alert.alert('Başarılı', 'Model testi tamamlandı!');
       if (onSubmitSuccess) onSubmitSuccess();
       return;
@@ -72,14 +97,16 @@ const ImageUploader = ({ setImage, setModelResult, onSubmitSuccess, skipSubmit =
     }
     setIsSubmitting(true);
     try {
-      await uploadImage(userId, localImage, modelResult?.decision);
+      console.log('Submitting image with userId:', userId, 'and URI:', localImage);
+      await uploadImage(userId, localImage);
       setIsSubmitting(false);
       Alert.alert('Başarılı', 'Resim doktor onayına gönderildi!');
       if (onSubmitSuccess) onSubmitSuccess();
     } catch (error) {
-      console.error('Error submitting image:', error);
-      Alert.alert('Hata', error.message || 'Resim gönderme hatası!');
+      console.error('Full error details:', error);
       setIsSubmitting(false);
+      const errorMessage = error.message || 'Bilinmeyen bir hata oluştu!';
+      Alert.alert('Hata', errorMessage);
     }
   };
 
