@@ -4,14 +4,13 @@ import { ScrollView, Text, View, StyleSheet, Image } from 'react-native';
 import DoctorComments from '../components/DoctorComments';
 
 const DoctorRequestsScreen = ({ route }) => {
-  const { image, modelResult } = route.params || {}; // Örnek veri, gerçekte bir liste olacak
+  const { image, modelResult } = route.params || {}; 
   const [doctorComments, setDoctorComments] = useState('');
   const [doctorName, setDoctorName] = useState('');
   const [doctorQualification, setDoctorQualification] = useState('');
 
   const handleSaveComment = () => {
     alert('Doktor yorumları kaydedildi!');
-    // Burada yorumları backend'e kaydetme işlemi yapılabilir
   };
 
   return (

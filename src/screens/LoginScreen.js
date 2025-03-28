@@ -82,7 +82,7 @@ const LoginScreen = () => {
             />
             <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
               <Text style={styles.buttonText}>
-                {loginType === 'doctor' ? 'Doktor Girişi' : 'Kullanıcı Girişi'}
+                {loginType === 'doctor' ? 'Doktor Girişi' : 'Üye Girişi'}
               </Text>
             </TouchableOpacity>
           </>
