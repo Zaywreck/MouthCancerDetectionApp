@@ -1,14 +1,16 @@
 // src/components/ResultCard.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Modal } from 'react-native';
+import { BASE_URL } from '../services/api';
 
 const ResultCard = ({ upload }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  let uri = BASE_URL + "/" + upload.file_path;
 
   return (
     <>
       <View style={styles.card}>
-        <Image source={{ uri: `http://192.168.1.108:8000/uploads/${upload.file_path}` }} style={styles.thumbnail} />
+        <Image source={{ uri: uri }} style={styles.thumbnail} />
         <View style={styles.info}>
           <Text style={styles.username}>Kullanıcı ID: {upload.user_id}</Text>
           <Text style={styles.diagnosis}>Doktor Teşhisi: {upload.status === 'approved' ? 'Onaylandı' : upload.status === 'rejected' ? 'Reddedildi' : 'Beklemede'}</Text>
@@ -21,7 +23,7 @@ const ResultCard = ({ upload }) => {
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Image source={{ uri: `http://192.168.1.108:8000/uploads/${upload.file_path}` }} style={styles.fullImage} />
+            <Image source={{ uri: uri }} style={styles.fullImage} />
             <Text style={styles.modalText}>Kullanıcı ID: {upload.user_id}</Text>
             <Text style={styles.modalText}>Doktor Teşhisi: {upload.status === 'approved' ? 'Onaylandı' : upload.status === 'rejected' ? 'Reddedildi' : 'Beklemede'}</Text>
             <Text style={styles.modalText}>Model Sonucu: {upload.model_result || 'Bilinmiyor'}</Text>

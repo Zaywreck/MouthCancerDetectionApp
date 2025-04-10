@@ -11,9 +11,16 @@ const ModelSelectionScreen = ({ navigation }) => {
     {
       title: 'Modeli Dene',
       description: 'Yapay zeka modelini test et',
-      icon: 'brain-outline',
+      icon: 'image-outline',
       route: 'ModelTest',
       visible: true, // Herkes görebilir
+    },
+    {
+      title: 'Histopatolojik Görüntü ile Test',
+      description: 'Histopatolojik görüntü ile modeli test et',
+      icon: 'image-outline',
+      route: 'HistopathologyTest',
+      visible: true, 
     },
     {
       title: 'Doktor Talepleri',

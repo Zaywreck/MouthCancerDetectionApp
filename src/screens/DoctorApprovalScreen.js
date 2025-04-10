@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { getImageUploadById, updateRequestStatus } from '../services/image';
+import { BASE_URL } from '../services/api';
 
 const DoctorApprovalScreen = () => {
   const route = useRoute();
@@ -14,7 +15,6 @@ const DoctorApprovalScreen = () => {
       try {
         const data = await getImageUploadById(requestId);
         data.file_path = data.file_path.replace("uploads\\", "");
-        console.log('Request:', data);
         setRequest(data);
       } catch (error) {
         console.error('Error fetching request:', error);
@@ -43,13 +43,12 @@ const DoctorApprovalScreen = () => {
 
   if (!request) return <Text>Yükleniyor...</Text>;
 
+  const uri = `${BASE_URL}/${request.file_path}`; // URI'yi dinamik olarak render sırasında hesapla
+
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled" // Klavyeyi kapatmak için eklenen özellik
-    >
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Text style={styles.pageTitle}>Talep Detayı</Text>
-      <Image source={{ uri: `http://192.168.1.108:8000/uploads/${request.file_path}` }} style={styles.fullImage} />
+      <Image source={{ uri }} style={styles.fullImage} />
       <Text style={styles.modelResult}>Model Sonucu: {request.model_result || 'Bilinmiyor'}</Text>
       <Text style={styles.modelResult}>Kullanıcı ID: {request.user_id}</Text>
       <Text style={styles.modelResult}>Talep Id: {request.id}</Text>

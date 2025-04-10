@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getDoctorRequests } from '../services/image'; // Servis fonksiyonu
+import { getDoctorRequests } from '../services/image';
+import { BASE_URL } from '../services/api';
 
 const DoctorRequestsScreen = () => {
   const [requests, setRequests] = useState([]);
@@ -11,11 +12,11 @@ const DoctorRequestsScreen = () => {
     const fetchRequests = async () => {
       try {
         const data = await getDoctorRequests();
-        data.map((request) => {
-          request.file_path = request.file_path.replace("uploads\\", "");
-        });
-        console.log('Requests:', data);
-        setRequests(data);
+        const updatedData = data.map((request) => ({
+          ...request,
+          file_path: request.file_path.replace("uploads\\", ""),
+        }));
+        setRequests(updatedData);
       } catch (error) {
         console.error('Error fetching requests:', error);
       }
@@ -27,19 +28,22 @@ const DoctorRequestsScreen = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.pageTitle}>Doktor Talepleri</Text>
       {requests.length > 0 ? (
-        requests.map((request) => (
-          <TouchableOpacity
-            key={request.id}
-            style={styles.requestCard}
-            onPress={() => navigation.navigate('DoctorApproval', { requestId: request.id })}
-          >
-            <Image source={{ uri: `http://192.168.1.108:8000/uploads/${request.file_path}` }} style={styles.thumbnail} />
-            <View style={styles.info}>
-              <Text style={styles.username}>Kullanıcı ID: {request.user_id}</Text>
-              <Text style={styles.date}>Yükleme Tarihi: {new Date(request.uploaded_at).toLocaleString()}</Text>
-            </View>
-          </TouchableOpacity>
-        ))
+        requests.map((request) => {
+          const uri = `${BASE_URL}/${request.file_path}`; // Her request için dinamik URI
+          return (
+            <TouchableOpacity
+              key={request.id}
+              style={styles.requestCard}
+              onPress={() => navigation.navigate('DoctorApproval', { requestId: request.id })}
+            >
+              <Image source={{ uri }} style={styles.thumbnail} />
+              <View style={styles.info}>
+                <Text style={styles.username}>Kullanıcı ID: {request.user_id}</Text>
+                <Text style={styles.date}>Yükleme Tarihi: {new Date(request.uploaded_at).toLocaleString()}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })
       ) : (
         <Text style={styles.noRequestText}>Henüz bir talep yok.</Text>
       )}

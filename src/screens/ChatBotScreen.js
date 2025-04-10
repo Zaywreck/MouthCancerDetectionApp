@@ -5,7 +5,7 @@ import MessageInput from '../components/MessageInput';
 import axios from 'axios';
 
 // Flask API endpoint (localhost for dev, replace with your server URL for production)
-const API_URL = 'http://192.168.149.136:5000/recommend'; // Flask appınızın çalıştığı adres
+const API_URL = 'http://192.168.72.1:3058/recommend'; // Flask appınızın çalıştığı adres
 
 const ChatbotScreen = ({ route }) => {
   const { chatbotType } = route.params;

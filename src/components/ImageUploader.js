@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { uploadImage } from '../services/image';
 import * as ImagePicker from 'expo-image-picker';
 
-const ImageUploader = ({ setImage, onSubmitSuccess, skipSubmit = false, setModelResult }) => {
+const ImageUploader = ({ setImage, onSubmitSuccess, isNormal = true }) => {
   const { userId, userType } = useAuth();
   const [localImage, setLocalImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,10 +50,6 @@ const ImageUploader = ({ setImage, onSubmitSuccess, skipSubmit = false, setModel
       const uri = result.assets[0].uri;
       setLocalImage(uri);
       setImage(uri);
-      if (skipSubmit && setModelResult) {
-        const modelResult = { decision: 'Positive', image: uri };
-        setModelResult(modelResult);
-      }
     }
   };
 
@@ -70,10 +66,6 @@ const ImageUploader = ({ setImage, onSubmitSuccess, skipSubmit = false, setModel
       const uri = result.assets[0].uri;
       setLocalImage(uri);
       setImage(uri);
-      if (skipSubmit && setModelResult) {
-        const modelResult = { decision: 'Positive', image: uri };
-        setModelResult(modelResult);
-      }
     }
   };
 
@@ -86,27 +78,21 @@ const ImageUploader = ({ setImage, onSubmitSuccess, skipSubmit = false, setModel
       Alert.alert('Kayıt Olun', 'Fotoğraf yüklemek için kayıt olmanız gerekmektedir.');
       return;
     }
-    if (skipSubmit) {
-      Alert.alert('Başarılı', 'Model testi tamamlandı!');
-      if (onSubmitSuccess) onSubmitSuccess();
-      return;
-    }
     if (!userId) {
       Alert.alert('Hata', 'Kullanıcı kimliği bulunamadı. Lütfen giriş yapın.');
       return;
     }
     setIsSubmitting(true);
     try {
-      console.log('Submitting image with userId:', userId, 'and URI:', localImage);
-      await uploadImage(userId, localImage);
+      console.log('Submitting image with userId:', userId, 'URI:', localImage, 'isNormal:', isNormal);
+      await uploadImage(userId, localImage, isNormal);
       setIsSubmitting(false);
       Alert.alert('Başarılı', 'Resim doktor onayına gönderildi!');
       if (onSubmitSuccess) onSubmitSuccess();
     } catch (error) {
       console.error('Full error details:', error);
       setIsSubmitting(false);
-      const errorMessage = error.message || 'Bilinmeyen bir hata oluştu!';
-      Alert.alert('Hata', errorMessage);
+      Alert.alert('Hata', error.message || 'Bilinmeyen bir hata oluştu!');
     }
   };
 
@@ -125,7 +111,7 @@ const ImageUploader = ({ setImage, onSubmitSuccess, skipSubmit = false, setModel
             disabled={isSubmitting}
           >
             <Text style={styles.buttonText}>
-              {isSubmitting ? 'Gönderiliyor...' : skipSubmit ? 'Test Et' : 'Doktor Onayına Gönder'}
+              {isSubmitting ? 'Gönderiliyor...' : 'Doktor Onayına Gönder'}
             </Text>
           </TouchableOpacity>
         </>

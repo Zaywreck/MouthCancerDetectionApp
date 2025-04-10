@@ -1,7 +1,8 @@
 // src/services/api.js
-const BASE_URL = 'http://192.168.1.108:8000'; // Replace with your backend IP
+export const BASE_URL = 'http://192.168.72.1:8080'; // Replace with your backend IP
 
 const apiFetch = async (endpoint, options = {}) => {
+  console.log(BASE_URL + endpoint);
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers: {

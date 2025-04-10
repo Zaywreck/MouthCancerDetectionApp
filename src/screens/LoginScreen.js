@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { loginUser } from '../services/auth'; // Import service
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginType, setLoginType] = useState('doctor');
+  const navigation = useNavigation();
 
   // Inside handleLogin in LoginScreen.js
   const handleLogin = async () => {
@@ -55,7 +57,7 @@ const LoginScreen = () => {
               source={require('../../assets/user-icon.png')}
               style={[styles.icon, loginType === 'user' && styles.activeIcon]}
             />
-            <Text style={[styles.tabText, loginType === 'user' && styles.activeTabText]}>Kullanıcı</Text>
+            <Text style={[styles.tabText, loginType === 'user' && styles.activeTabText]}>Üye</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setLoginType('guest')}
@@ -98,6 +100,12 @@ const LoginScreen = () => {
           </TouchableOpacity>
         )}
       </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Register')}
+        style={styles.loginLink}
+      >
+        <Text style={styles.loginLinkText}>Hesabınız yok mu? Kayıt olun</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -187,6 +195,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 3,
+  },
+  loginLink: {
+    margin:5,
+    alignItems: 'center',
+  },
+  loginLinkText: {
+    fontSize: 16,
+    color: '#007AFF',
   },
   buttonText: {
     color: '#fff',

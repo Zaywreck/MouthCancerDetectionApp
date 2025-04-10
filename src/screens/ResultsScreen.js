@@ -37,7 +37,6 @@ const ResultsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Sonuçlarım</Text>
       <FlatList
         data={uploads}
         renderItem={({ item }) => <ResultCard upload={item} />}
@@ -50,7 +49,6 @@ const ResultsScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#F5F7FA' },
-  header: { fontSize: 24, fontWeight: 'bold', color: '#003087', textAlign: 'center', marginBottom: 20 },
   emptyText: { fontSize: 16, color: '#666', textAlign: 'center', marginTop: 20 },
 });
 

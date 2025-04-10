@@ -1,18 +1,17 @@
 // src/services/image.js
 import apiFetch from './api';
 
-export const uploadImage = async (userId, imageUri) => {
-  // user_id'yi URL'de query parametresi olarak ekliyoruz
+export const uploadImage = async (userId, imageUri, isNormal = true) => {
   const url = `/images/upload?user_id=${userId}`;
   console.log('Uploading image to:', url);
 
-  // FormData sadece file içerecek
   const formData = new FormData();
   formData.append('file', {
     uri: imageUri,
     type: 'image/jpeg',
-    name: 'upload.jpg',
+    name: `upload_${userId}.jpg`,
   });
+  formData.append('is_normal', isNormal);  // is_normal parametresini ekle
 
   try {
     const response = await apiFetch(url, {
@@ -22,28 +21,75 @@ export const uploadImage = async (userId, imageUri) => {
     console.log('Upload successful, response:', response);
     return response;
   } catch (error) {
-    console.error('Upload failed, full error:', error);
-    throw error; // Hata detaylarını üst katmana ilet
+    console.error('Upload failed - URL:', url, 'Error:', error.message);
+    throw error;
   }
 };
 
 export const getUserUploads = async (userId) => {
-  return apiFetch(`/images/user-uploads?user_id=${userId}`, {
-    method: 'GET',
-  });
+  const url = `/images/user-uploads?user_id=${userId}`;
+  console.log('Fetching user uploads from:', url);
+  try {
+    const response = await apiFetch(url, {
+      method: 'GET',
+    });
+    console.log('User uploads response:', response);
+    return response;
+  } catch (error) {
+    console.error('Failed to fetch user uploads - URL:', url, 'Error:', error.message);
+    throw error;
+  }
 };
 
 export const getDoctorRequests = async () => {
-  return apiFetch('/images/doctor-requests'); // Bekleyen talepleri döndürür
+  const url = '/images/doctor-requests';
+  console.log('Fetching doctor requests from:', url);
+  try {
+    const response = await apiFetch(url, {
+      method: 'GET',
+    });
+    console.log('Doctor requests response:', response);
+    return response;
+  } catch (error) {
+    console.error('Failed to fetch doctor requests - URL:', url, 'Error:', error.message);
+    throw error;
+  }
 };
 
 export const getImageUploadById = async (id) => {
-  return apiFetch(`/images/uploads/${id}`); // Belirli bir talebin detaylarını döndürür
+  const url = `/images/uploads/${id}`;
+  console.log('Fetching image upload from:', url);
+  try {
+    const response = await apiFetch(url, {
+      method: 'GET',
+    });
+    console.log('Image upload response:', response);
+    return response;
+  } catch (error) {
+    console.error('Failed to fetch image upload - URL:', url, 'Error:', error.message);
+    throw error;
+  }
 };
 
 export const updateRequestStatus = async (id, status, comment) => {
   const url = `/images/update-request/${id}?status=${status}&doctor_comment=${encodeURIComponent(comment || '')}`;
-  return apiFetch(url, {
-    method: 'PUT',
-  });
+  console.log('Updating request at:', url);
+  try {
+    const response = await apiFetch(url, {
+      method: 'PUT',
+    });
+    console.log('Update request response:', response);
+    return response;
+  } catch (error) {
+    console.error('Failed to update request - URL:', url, 'Error:', error.message);
+    throw error;
+  }
+};
+
+export default {
+  uploadImage,
+  getUserUploads,
+  getDoctorRequests,
+  getImageUploadById,
+  updateRequestStatus,
 };

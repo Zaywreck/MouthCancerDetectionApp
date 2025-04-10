@@ -1,9 +1,9 @@
-// src/screens/ModelTestScreen.js
+// src/screens/HistopathologyTestScreen.js
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet } from 'react-native';
 import ImageUploader from '../components/ImageUploader';
 
-const ModelTestScreen = ({ navigation }) => {
+const HistopathologyTestScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
 
   const handleSubmitSuccess = () => {
@@ -13,11 +13,11 @@ const ModelTestScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.uploadArea}>
-        <Text style={styles.pageTitle}>Yapay Zeka Modeli ile Test</Text>
+        <Text style={styles.pageTitle}>Histopatolojik Görüntü Testi</Text>
         <ImageUploader
           setImage={setImage}
           onSubmitSuccess={handleSubmitSuccess}
-          isNormal={true}  // Normal fotoğraf
+          isNormal={false}  // Histopatolojik fotoğraf
         />
       </View>
     </ScrollView>
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModelTestScreen;
+export default HistopathologyTestScreen;
