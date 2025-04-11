@@ -1,8 +1,8 @@
 // src/screens/LoginScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
-import { useAuth } from '../context/AuthContext';
-import { loginUser } from '../services/auth'; // Import service
+import { useAuth } from '../../context/AuthContext';
+import { loginUser } from '../../services/auth'; // Import service
 import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
@@ -44,7 +44,7 @@ const LoginScreen = () => {
             style={[styles.tabButton, loginType === 'doctor' && styles.activeTab]}
           >
             <Image
-              source={require('../../assets/doctor-icon.png')}
+              source={require('../../../assets/doctor-icon.png')}
               style={[styles.icon, loginType === 'doctor' && styles.activeIcon]}
             />
             <Text style={[styles.tabText, loginType === 'doctor' && styles.activeTabText]}>Doktor</Text>
@@ -54,7 +54,7 @@ const LoginScreen = () => {
             style={[styles.tabButton, loginType === 'user' && styles.activeTab]}
           >
             <Image
-              source={require('../../assets/user-icon.png')}
+              source={require('../../../assets/user-icon.png')}
               style={[styles.icon, loginType === 'user' && styles.activeIcon]}
             />
             <Text style={[styles.tabText, loginType === 'user' && styles.activeTabText]}>Üye</Text>
@@ -64,7 +64,7 @@ const LoginScreen = () => {
             style={[styles.tabButton, loginType === 'guest' && styles.activeTab]}
           >
             <Image
-              source={require('../../assets/guest-icon.png')}
+              source={require('../../../assets/guest-icon.png')}
               style={[styles.icon, loginType === 'guest' && styles.activeIcon]}
             />
             <Text style={[styles.tabText, loginType === 'guest' && styles.activeTabText]}>Misafir</Text>

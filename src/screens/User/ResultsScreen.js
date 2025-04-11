@@ -1,9 +1,9 @@
 // src/screens/ResultsScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { useAuth } from '../context/AuthContext';
-import { getUserUploads } from '../services/image';
-import ResultCard from '../components/ResultCard';
+import { useAuth } from '../../context/AuthContext';
+import { getUserUploads } from '../../services/image';
+import ResultCard from '../../components/ResultCard';
 
 const ResultsScreen = ({ navigation }) => {
   const { userId, userType } = useAuth();

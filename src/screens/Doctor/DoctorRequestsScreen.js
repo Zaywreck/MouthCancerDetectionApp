@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getDoctorRequests } from '../services/image';
-import { BASE_URL } from '../services/api';
+import { getDoctorRequests } from '../../services/image';
+import { BASE_URL } from '../../services/api';
 
 const DoctorRequestsScreen = () => {
   const [requests, setRequests] = useState([]);

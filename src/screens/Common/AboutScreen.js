@@ -6,17 +6,17 @@ const teamMembers = [
   {
     name: 'Mert Gülle',
     role: 'Danışman Hoca',
-    image: require('../../assets/images/ass.jpg'),
+    image: require('../../../assets/images/ass.jpg'),
   },
   {
     name: 'Mert Gülle',
     role: 'Yapay Zeka Geliştiricisi',
-    image: require('../../assets/images/ass.jpg'),
+    image: require('../../../assets/images/ass.jpg'),
   },
   {
     name: 'Mert Gülle',
     role: 'Mobil Uygulama Geliştiricisi',
-    image: require('../../assets/images/ass.jpg'),
+    image: require('../../../assets/images/ass.jpg'),
   },
 ];
 

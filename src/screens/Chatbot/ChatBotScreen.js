@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import MessagesSection from '../components/MessagesSection';
-import MessageInput from '../components/MessageInput';
+import MessagesSection from '../../components/MessagesSection';
+import MessageInput from '../../components/MessageInput';
 import axios from 'axios';
 
 // Flask API endpoint (localhost for dev, replace with your server URL for production)

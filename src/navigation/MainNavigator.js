@@ -3,20 +3,21 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
-import HomeScreen from '../screens/HomeScreen';
-import ModelSelectionScreen from '../screens/ModelSelectionScreen';
-import ModelTestScreen from '../screens/ModelTestScreen';
-import DoctorRequestsScreen from '../screens/DoctorRequestsScreen';
-import DoctorTestScreen from '../screens/DoctorTestScreen';
-import DoctorApprovalScreen from '../screens/DoctorApprovalScreen';
-import DetailsScreen from '../screens/DetailsScreen';
-import AboutScreen from '../screens/AboutScreen';
-import LoginScreen from '../screens/LoginScreen';
-import ChatbotSelectionScreen from '../screens/ChatBotSelectionScreen';
-import ChatbotScreen from '../screens/ChatBotScreen';
-import ResultsScreen from '../screens/ResultsScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import HistopathologyTestScreen from '../screens/HistopatologyTestScreen';
+import HomeScreen from '../screens/Common/HomeScreen';
+import ModelSelectionScreen from '../screens/Common/ModelSelectionScreen';
+import ModelTestScreen from '../screens/Common/ModelTestScreen';
+import HistopathologyTestScreen from '../screens/Common/HistopatologyTestScreen';
+import ResultsScreen from '../screens/User/ResultsScreen';
+import DoctorApprovalScreen from '../screens/Doctor/DoctorApprovalScreen';
+import ChatbotScreen from '../screens/Chatbot/ChatBotScreen';
+import ChatbotSelectionScreen from '../screens/Chatbot/ChatBotSelectionScreen';
+import LoginScreen from '../screens/Auth/LoginScreen';
+import RegisterScreen from '../screens/Auth/RegisterScreen';  
+import DetailsScreen from '../screens/Common/DetailsScreen';
+import AboutScreen from '../screens/Common/AboutScreen';
+import DoctorRequestsScreen from '../screens/Doctor/DoctorRequestsScreen';
+import DoctorTestScreen from '../screens/Doctor/DoctorTestScreen';
+
 
 const Stack = createStackNavigator();
 

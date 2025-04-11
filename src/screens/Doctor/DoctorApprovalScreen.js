@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { getImageUploadById, updateRequestStatus } from '../services/image';
-import { BASE_URL } from '../services/api';
+import { getImageUploadById, updateRequestStatus } from '../../services/image';
+import { BASE_URL } from '../../services/api';
 
 const DoctorApprovalScreen = () => {
   const route = useRoute();

@@ -1,7 +1,7 @@
 // src/screens/HistopathologyTestScreen.js
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet } from 'react-native';
-import ImageUploader from '../components/ImageUploader';
+import ImageUploader from '../../components/ImageUploader';
 
 const HistopathologyTestScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);

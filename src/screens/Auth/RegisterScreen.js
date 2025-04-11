@@ -1,7 +1,7 @@
 // src/screens/RegisterScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
-import { registerUser } from '../services/auth'; // Import service
+import { registerUser } from '../../services/auth'; // Import service
 
 
 const RegisterScreen = ({ navigation }) => {
@@ -44,7 +44,7 @@ const RegisterScreen = ({ navigation }) => {
             style={[styles.tabButton, userType === 'doctor' && styles.activeTab]}
           >
             <Image
-              source={require('../../assets/doctor-icon.png')}
+              source={require('../../../assets/doctor-icon.png')}
               style={[styles.icon, userType === 'doctor' && styles.activeIcon]}
             />
             <Text style={[styles.tabText, userType === 'doctor' && styles.activeTabText]}>Doktor</Text>
@@ -54,7 +54,7 @@ const RegisterScreen = ({ navigation }) => {
             style={[styles.tabButton, userType === 'user' && styles.activeTab]}
           >
             <Image
-              source={require('../../assets/user-icon.png')}
+              source={require('../../../assets/user-icon.png')}
               style={[styles.icon, userType === 'user' && styles.activeIcon]}
             />
             <Text style={[styles.tabText, userType === 'user' && styles.activeTabText]}>Kullanıcı</Text>

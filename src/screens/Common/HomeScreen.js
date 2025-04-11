@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, ScrollView } from 'react-native';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
@@ -74,7 +74,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../../assets/images/background.jpg')} // Medikal temalı bir arkaplan önerilir
+      source={require('../../../assets/images/background.jpg')} // Medikal temalı bir arkaplan önerilir
       style={styles.background}
     >
       <View style={styles.overlay}>

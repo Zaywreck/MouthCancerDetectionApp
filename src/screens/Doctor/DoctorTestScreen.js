@@ -1,7 +1,7 @@
 // src/screens/DoctorTestScreen.js
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet, Image } from 'react-native';
-import ImageUploader from '../components/ImageUploader';
+import ImageUploader from '../../components/ImageUploader';
 
 const DoctorTestScreen = () => {
   const [image, setImage] = useState(null);
