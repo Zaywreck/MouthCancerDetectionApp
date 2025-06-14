@@ -1,14 +1,23 @@
 // src/services/api.js
-export const BASE_URL = 'http://192.168.3.152:8080'; // Replace with your backend IP
+const url = process.env.EXPO_PUBLIC_API_URL;
+// const port = process.env.EXPO_PUBLIC_API_PORT;
+export const BASE_URL = `${url}`;
 
 const apiFetch = async (endpoint, options = {}) => {
   console.log(BASE_URL + endpoint);
+  
+  // FormData kullanılıyorsa Content-Type header'ını set etme
+  // Browser/React Native otomatik olarak multipart/form-data set edecek
+  const headers = { ...options.headers };
+  
+  // FormData değilse Content-Type: application/json set et
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+  
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
-    headers: {
-      ...options.headers,
-      'Content-Type': 'application/json',
-    },
+    headers: headers,
   });
 
   if (!response.ok) {
@@ -19,7 +28,5 @@ const apiFetch = async (endpoint, options = {}) => {
 
   return response.json();
 };
-
-
 
 export default apiFetch;

@@ -4,9 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import HomeScreen from '../screens/Common/HomeScreen';
-import ModelSelectionScreen from '../screens/Common/ModelSelectionScreen';
 import ModelTestScreen from '../screens/Common/ModelTestScreen';
-import HistopathologyTestScreen from '../screens/Common/HistopatologyTestScreen';
+
 import ResultsScreen from '../screens/User/ResultsScreen';
 import DoctorApprovalScreen from '../screens/Doctor/DoctorApprovalScreen';
 import ChatbotScreen from '../screens/Chatbot/ChatBotScreen';
@@ -32,8 +31,11 @@ const stackOptions = {
 // Navigator for unauthenticated users
 function AuthNavigator() {
   return (
-    <Stack.Navigator screenOptions={stackOptions}>
-      <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+    <Stack.Navigator screenOptions={stackOptions} initialRouteName="Home">
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Details" component={DetailsScreen} options={{ title: 'Detaylar' }} />
+      <Stack.Screen name="About" component={AboutScreen} options={{ title: 'Biz Kimiz' }} />
+      <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Giriş Yap' }} />
       <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Kayıt Ol' }} />
     </Stack.Navigator>
   );
@@ -44,10 +46,8 @@ function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={stackOptions}>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-      {/* ModelTestScreen is used for both AI model and histopathology tests */}
-      <Stack.Screen name="ModelSelection" component={ModelSelectionScreen} options={{ title: 'Model Seçimi' }} />
-      <Stack.Screen name="ModelTest" component={ModelTestScreen} options={{ title: 'Model Test' }} />
-      <Stack.Screen name="HistopathologyTest" component={HistopathologyTestScreen} options={{ title: 'Histopatoloji Testi' }} />
+      {/* ModelTestScreen is the unified upload screen for both normal and histopathology */}
+      <Stack.Screen name="ModelTest" component={ModelTestScreen} options={{ title: 'Model Testi' }} />
       {/* related to results */}
       <Stack.Screen name="Results" component={ResultsScreen} options={{ title: 'Sonuçlarım' }} />
       <Stack.Screen name="DoctorRequests" component={DoctorRequestsScreen} options={{ title: 'Doktor İstekleri' }} />
@@ -57,8 +57,8 @@ function AppNavigator() {
       <Stack.Screen name="Details" component={DetailsScreen} options={{ title: 'Detaylar' }} />
       <Stack.Screen name="About" component={AboutScreen} options={{ title: 'Biz Kimiz' }} />
       {/* Chatbot related screens */}
-      <Stack.Screen name="ChatBotSelection" component={ChatbotSelectionScreen} options={{ title: 'ChatBotSelection' }} />
-      <Stack.Screen name="ChatBot" component={ChatbotScreen} options={{ title: 'ChatBot' }} />
+      <Stack.Screen name="ChatBotSelection" component={ChatbotSelectionScreen} options={{ title: 'Chatbot Seçimi' }} />
+      <Stack.Screen name="ChatBot" component={ChatbotScreen} options={{ title: 'ChatBot' , headerShown: false}} />
     </Stack.Navigator>
   );
 }
