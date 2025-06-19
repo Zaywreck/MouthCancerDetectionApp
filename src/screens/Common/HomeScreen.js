@@ -3,12 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from
 import { useAuth } from '../../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-
-const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }) => {
-  const { logout, userType, userId } = useAuth();
+  const { logout, userType } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -31,7 +28,7 @@ const HomeScreen = ({ navigation }) => {
       gradient: ['#50C878', '#3CB371'],
     };
     const chatBotItem = {
-      title: 'ChatBot',
+      title: 'AI Asistan',
       description: 'Sanal doktorunuza sorular sorun',
       icon: 'chatbubble-ellipses-outline',
       route: 'ChatBotSelection',
@@ -39,15 +36,15 @@ const HomeScreen = ({ navigation }) => {
     };
     const doctorItems = [
       {
-        title: 'Doktor İstekleri',
+        title: 'Taleplerim',
         description: 'Onay bekleyen istekleri görüntüle',
         icon: 'document-text-outline',
         route: 'DoctorRequests',
         gradient: ['#E74C3C', '#C0392B'],
       },
       {
-        title: 'Doktor Test',
-        description: 'Modeli test et',
+        title: 'Model Testi',
+        description: 'Yapay zeka modelimizi test et',
         icon: 'flask-outline',
         route: 'DoctorTest',
         gradient: ['#F1C40F', '#F39C12'],
@@ -110,7 +107,7 @@ const HomeScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>Teşhis Uygulaması</Text>
+          <Text style={styles.title}>OralHealth-AI</Text>
           <Text style={styles.subtitle}>
             Sağlığınız için yapay zeka destekli çözümler
           </Text>
@@ -207,7 +204,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#003087',
+    color: 'rgb(55, 118, 235)',
     textAlign: 'center',
     marginBottom: 8,
   },

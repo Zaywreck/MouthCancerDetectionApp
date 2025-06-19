@@ -120,7 +120,7 @@ const ChatbotScreen = ({ route, navigation }) => {
         showsVerticalScrollIndicator={false}
     >
         <View style={styles.messagesContainer}>
-          <MessagesSection messages={messages} isLoading={isLoading} />
+          <MessagesSection messages={messages} isLoading={isLoading} botIconName={chatbotInfo.icon} />
         </View>
       </KeyboardAwareScrollView>
 

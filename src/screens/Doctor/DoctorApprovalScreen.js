@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator, Platform, KeyboardAvoidingView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { getImageUploadById, updateRequestStatus } from '../../services/image';
@@ -147,133 +147,145 @@ const DoctorApprovalScreen = () => {
   const statusInfo = getStatusInfo(request.status);
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.headerBackButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#003087" />
-        </TouchableOpacity>
-        <Text style={styles.pageTitle}>Talep Detayı</Text>
-        <View style={styles.placeholder} />
-      </View>
-
-      {/* Status Card */}
-      <View style={styles.statusCard}>
-        <Ionicons name={statusInfo.icon} size={24} color={statusInfo.color} />
-        <Text style={[styles.statusText, { color: statusInfo.color }]}>
-          {statusInfo.text}
-        </Text>
-      </View>
-
-      {/* Image Card */}
-      <View style={styles.imageCard}>
-        <Image source={{ uri }} style={styles.fullImage} />
-        <View style={styles.imageInfo}>
-          <Text style={styles.imageInfoText}>
-            📸 {getPhotoTypeText(request.is_normal)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Patient Info Card */}
-      <View style={styles.infoCard}>
-        <Text style={styles.cardTitle}>Hasta Bilgileri</Text>
-        
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Hasta ID:</Text>
-          <Text style={styles.infoValue}>{request.user_id}</Text>
-        </View>
-        
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Talep ID:</Text>
-          <Text style={styles.infoValue}>{request.id}</Text>
-        </View>
-        
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Yükleme Tarihi:</Text>
-          <Text style={styles.infoValue}>
-            {new Date(request.uploaded_at).toLocaleDateString('tr-TR')} - {' '}
-            {new Date(request.uploaded_at).toLocaleTimeString('tr-TR', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })}
-          </Text>
-        </View>
-        
-        {request.model_result && (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Model Sonucu:</Text>
-            <Text style={[styles.infoValue, styles.modelResultText]}>
-              {request.model_result}
-            </Text>
-          </View>
-        )}
-      </View>
-
-      {/* Doctor Comment Section */}
-      <View style={styles.commentCard}>
-        <Text style={styles.cardTitle}>Doktor Yorumu</Text>
-        <TextInput
-          style={styles.commentInput}
-          placeholder={request.status === 'pending' ? 
-            "Değerlendirmenizi ve yorumlarınızı yazın..." : 
-            "Mevcut yorum..."
-          }
-          value={doctorComment}
-          onChangeText={setDoctorComment}
-          multiline
-          numberOfLines={4}
-          textAlignVertical="top"
-          editable={request.status === 'pending'}
-        />
-        
-        {request.doctor_comments && (
-          <View style={styles.existingComment}>
-            <Text style={styles.existingCommentLabel}>Mevcut Yorum:</Text>
-            <Text style={styles.existingCommentText}>{request.doctor_comments}</Text>
-          </View>
-        )}
-      </View>
-
-      {/* Action Buttons */}
-      {request.status === 'pending' && (
-        <View style={styles.buttonContainer}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
           <TouchableOpacity 
-            style={[styles.actionButton, styles.rejectButton, submitting && styles.disabledButton]}
-            onPress={handleReject}
-            disabled={submitting}
+            style={styles.headerBackButton}
+            onPress={() => navigation.goBack()}
           >
-            <Ionicons name="close-circle-outline" size={20} color="#fff" />
-            <Text style={styles.buttonText}>
-              {submitting ? 'İşleniyor...' : 'Reddet'}
-            </Text>
+            <Ionicons name="arrow-back" size={24} color="#003087" />
           </TouchableOpacity>
+          <Text style={styles.pageTitle}>Talep Detayı</Text>
+          <View style={styles.placeholder} />
+        </View>
+
+        {/* Status Card */}
+        <View style={styles.statusCard}>
+          <Ionicons name={statusInfo.icon} size={24} color={statusInfo.color} />
+          <Text style={[styles.statusText, { color: statusInfo.color }]}>
+            {statusInfo.text}
+          </Text>
+        </View>
+
+        {/* Image Card */}
+        <View style={styles.imageCard}>
+          <Image source={{ uri }} style={styles.fullImage} />
+          <View style={styles.imageInfo}>
+            <Text style={styles.imageInfoText}>
+              📸 {getPhotoTypeText(request.is_normal)}
+            </Text>
+          </View>
+        </View>
+
+        {/* Patient Info Card */}
+        <View style={styles.infoCard}>
+          <Text style={styles.cardTitle}>Hasta Bilgileri</Text>
           
-          <TouchableOpacity 
-            style={[styles.actionButton, styles.approveButton, submitting && styles.disabledButton]}
-            onPress={handleApprove}
-            disabled={submitting}
-          >
-            <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
-            <Text style={styles.buttonText}>
-              {submitting ? 'İşleniyor...' : 'Onayla'}
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Hasta ID:</Text>
+            <Text style={styles.infoValue}>{request.user_id}</Text>
+          </View>
+          
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Talep ID:</Text>
+            <Text style={styles.infoValue}>{request.id}</Text>
+          </View>
+          
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Yükleme Tarihi:</Text>
+            <Text style={styles.infoValue}>
+              {new Date(request.uploaded_at).toLocaleDateString('tr-TR')} - {' '}
+              {new Date(request.uploaded_at).toLocaleTimeString('tr-TR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
             </Text>
-          </TouchableOpacity>
+          </View>
+          
+          {request.model_result && (
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Model Sonucu:</Text>
+              <Text style={[styles.infoValue, styles.modelResultText]}>
+                {request.model_result}
+              </Text>
+            </View>
+          )}
         </View>
-      )}
 
-      {request.status !== 'pending' && (
-        <View style={styles.completedInfo}>
-          <Ionicons name="information-circle-outline" size={24} color="#007AFF" />
-          <Text style={styles.completedText}>
-            Bu talep daha önce {statusInfo.text.toLowerCase()} durumuna getirilmiş.
-          </Text>
+        {/* Doctor Comment Section */}
+        <View style={styles.commentCard}>
+          <Text style={styles.cardTitle}>Doktor Yorumu</Text>
+          <TextInput
+            style={styles.commentInput}
+            placeholder={request.status === 'pending' ? 
+              "Değerlendirmenizi ve yorumlarınızı yazın..." : 
+              "Mevcut yorum..."
+            }
+            value={doctorComment}
+            onChangeText={setDoctorComment}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+            editable={request.status === 'pending'}
+            returnKeyType="done"
+          />
+          
+          {request.doctor_comments && (
+            <View style={styles.existingComment}>
+              <Text style={styles.existingCommentLabel}>Mevcut Yorum:</Text>
+              <Text style={styles.existingCommentText}>{request.doctor_comments}</Text>
+            </View>
+          )}
         </View>
-      )}
-    </ScrollView>
+
+        {/* Action Buttons */}
+        {request.status === 'pending' && (
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.rejectButton, submitting && styles.disabledButton]}
+              onPress={handleReject}
+              disabled={submitting}
+            >
+              <Ionicons name="close-circle-outline" size={20} color="#fff" />
+              <Text style={styles.buttonText}>
+                {submitting ? 'İşleniyor...' : 'Reddet'}
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.approveButton, submitting && styles.disabledButton]}
+              onPress={handleApprove}
+              disabled={submitting}
+            >
+              <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+              <Text style={styles.buttonText}>
+                {submitting ? 'İşleniyor...' : 'Onayla'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {request.status !== 'pending' && (
+          <View style={styles.completedInfo}>
+            <Ionicons name="information-circle-outline" size={24} color="#007AFF" />
+            <Text style={styles.completedText}>
+              Bu talep daha önce {statusInfo.text.toLowerCase()} durumuna getirilmiş.
+            </Text>
+          </View>
+        )}
+        <View style={{ height: 30 }} />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

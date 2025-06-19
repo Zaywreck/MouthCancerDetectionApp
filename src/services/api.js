@@ -4,7 +4,7 @@ const url = process.env.EXPO_PUBLIC_API_URL;
 export const BASE_URL = `${url}`;
 
 const apiFetch = async (endpoint, options = {}) => {
-  console.log(BASE_URL + endpoint);
+  // console.log(BASE_URL + endpoint);
   
   // FormData kullanılıyorsa Content-Type header'ını set etme
   // Browser/React Native otomatik olarak multipart/form-data set edecek

@@ -47,17 +47,17 @@ function AppNavigator() {
     <Stack.Navigator screenOptions={stackOptions}>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       {/* ModelTestScreen is the unified upload screen for both normal and histopathology */}
-      <Stack.Screen name="ModelTest" component={ModelTestScreen} options={{ title: 'Model Testi' }} />
+      <Stack.Screen name="ModelTest" component={ModelTestScreen} options={{ title: '' }} />
       {/* related to results */}
-      <Stack.Screen name="Results" component={ResultsScreen} options={{ title: 'Sonuçlarım' }} />
-      <Stack.Screen name="DoctorRequests" component={DoctorRequestsScreen} options={{ title: 'Doktor İstekleri' }} />
-      <Stack.Screen name="DoctorTest" component={DoctorTestScreen} options={{ title: 'Doktor Test' }} />
-      <Stack.Screen name="DoctorApproval" component={DoctorApprovalScreen} options={{ title: 'Doktor Onay' }} />
+      <Stack.Screen name="Results" component={ResultsScreen} options={{ title: '' }} />
+      <Stack.Screen name="DoctorRequests" component={DoctorRequestsScreen} options={{ title: '' }} />
+      <Stack.Screen name="DoctorTest" component={DoctorTestScreen} options={{ title: '' }} />
+      <Stack.Screen name="DoctorApproval" component={DoctorApprovalScreen} options={{ title: '' }} />
       {/* rest of the screens */}
       <Stack.Screen name="Details" component={DetailsScreen} options={{ title: 'Detaylar' }} />
       <Stack.Screen name="About" component={AboutScreen} options={{ title: 'Biz Kimiz' }} />
       {/* Chatbot related screens */}
-      <Stack.Screen name="ChatBotSelection" component={ChatbotSelectionScreen} options={{ title: 'Chatbot Seçimi' }} />
+      <Stack.Screen name="ChatBotSelection" component={ChatbotSelectionScreen} options={{ title: '' }} />
       <Stack.Screen name="ChatBot" component={ChatbotScreen} options={{ title: 'ChatBot' , headerShown: false}} />
     </Stack.Navigator>
   );

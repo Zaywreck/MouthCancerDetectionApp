@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const MessagesSection = ({ messages, isLoading }) => {
+const MessagesSection = ({ messages, isLoading, botIconName }) => {
   const parseMessageContent = (content, isBot) => {
     if (typeof content !== 'string') content = '';
     const lines = content.split('\n').filter((line) => line.trim());
@@ -69,7 +69,7 @@ const MessagesSection = ({ messages, isLoading }) => {
             >
               {message.isBot && (
                 <View style={styles.botAvatar}>
-                  <Ionicons name="chatbot" size={20} color="#667eea" />
+                  <Ionicons name={botIconName || 'chatbot'} size={20} color="#667eea" />
                 </View>
               )}
               

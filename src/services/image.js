@@ -3,7 +3,7 @@ import apiFetch, { BASE_URL } from './api';
 
 export const uploadImage = async (userId, imageUri, isNormal = true, isDoctorTest = false) => {
   const url = `/images/upload?user_id=${userId}`;
-  console.log('Uploading image to:', url);
+  // console.log('Uploading image to:', url);
 
   const formData = new FormData();
   
@@ -35,7 +35,7 @@ export const uploadImage = async (userId, imageUri, isNormal = true, isDoctorTes
     }
 
     const result = await response.json();
-    console.log('Upload successful, response:', result);
+    // console.log('Upload successful, response:', result);
     return result;
   } catch (error) {
     console.error('Upload failed - URL:', url, 'Error:', error.message);
@@ -45,12 +45,12 @@ export const uploadImage = async (userId, imageUri, isNormal = true, isDoctorTes
 
 export const getUserUploads = async (userId) => {
   const url = `/images/user-uploads?user_id=${userId}`;
-  console.log('Fetching user uploads from:', url);
+  // console.log('Fetching user uploads from:', url);
   try {
     const response = await apiFetch(url, {
       method: 'GET',
     });
-    console.log('User uploads response:', response);
+    // console.log('User uploads response:', response);
     return response;
   } catch (error) {
     console.error('Failed to fetch user uploads - URL:', url, 'Error:', error.message);
@@ -63,12 +63,12 @@ export const getDoctorRequests = async (status = null) => {
   if (status) {
     url += `?status=${status}`;
   }
-  console.log('Fetching doctor requests from:', url);
+  // console.log('Fetching doctor requests from:', url);
   try {
     const response = await apiFetch(url, {
       method: 'GET',
     });
-    console.log('Doctor requests response:', response);
+    // console.log('Doctor requests response:', response);
     return response;
   } catch (error) {
     console.error('Failed to fetch doctor requests - URL:', url, 'Error:', error.message);
@@ -78,12 +78,12 @@ export const getDoctorRequests = async (status = null) => {
 
 export const getDoctorRequestStatistics = async () => {
   const url = '/images/doctor-request-statistics';
-  console.log('Fetching doctor request statistics from:', url);
+  // console.log('Fetching doctor request statistics from:', url);
   try {
     const response = await apiFetch(url, {
       method: 'GET',
     });
-    console.log('Doctor request statistics response:', response);
+    // console.log('Doctor request statistics response:', response);
     return response;
   } catch (error) {
     console.error('Failed to fetch doctor request statistics - URL:', url, 'Error:', error.message);
@@ -93,12 +93,12 @@ export const getDoctorRequestStatistics = async () => {
 
 export const getImageUploadById = async (id) => {
   const url = `/images/upload/${id}`;
-  console.log('Fetching image upload from:', url);
+  // console.log('Fetching image upload from:', url);
   try {
     const response = await apiFetch(url, {
       method: 'GET',
     });
-    console.log('Image upload response:', response);
+    // console.log('Image upload response:', response);
     return response;
   } catch (error) {
     console.error('Failed to fetch image upload - URL:', url, 'Error:', error.message);
@@ -108,12 +108,12 @@ export const getImageUploadById = async (id) => {
 
 export const updateRequestStatus = async (id, status, comment) => {
   const url = `/images/update-request/${id}?status=${status}&doctor_comment=${encodeURIComponent(comment || '')}`;
-  console.log('Updating request at:', url);
+  // console.log('Updating request at:', url);
   try {
     const response = await apiFetch(url, {
       method: 'PUT',
     });
-    console.log('Update request response:', response);
+    // console.log('Update request response:', response);
     return response;
   } catch (error) {
     console.error('Failed to update request - URL:', url, 'Error:', error.message);
@@ -125,7 +125,7 @@ export const updateRequestStatus = async (id, status, comment) => {
 
 export const doctorTestClassification = async (doctorId, imageUri, isNormal = true) => {
   const url = `/images/doctor-test-classification?doctor_id=${doctorId}`;
-  console.log('Doctor testing classification at:', url);
+  // console.log('Doctor testing classification at:', url);
 
   const formData = new FormData();
   
@@ -157,7 +157,7 @@ export const doctorTestClassification = async (doctorId, imageUri, isNormal = tr
     }
 
     const result = await response.json();
-    console.log('Doctor test response:', result);
+    // console.log('Doctor test response:', result);
     return result;
   } catch (error) {
     console.error('Failed to run doctor test - URL:', url, 'Error:', error.message);
@@ -167,12 +167,12 @@ export const doctorTestClassification = async (doctorId, imageUri, isNormal = tr
 
 export const getDoctorTestHistory = async (doctorId) => {
   const url = `/images/doctor-test-history?doctor_id=${doctorId}`;
-  console.log('Fetching doctor test history from:', url);
+  // console.log('Fetching doctor test history from:', url);
   try {
     const response = await apiFetch(url, {
       method: 'GET',
     });
-    console.log('Doctor test history response:', response);
+    // console.log('Doctor test history response:', response);
     return response;
   } catch (error) {
     console.error('Failed to fetch doctor test history - URL:', url, 'Error:', error.message);
@@ -182,12 +182,12 @@ export const getDoctorTestHistory = async (doctorId) => {
 
 export const getModelStatus = async () => {
   const url = '/images/model-status';
-  console.log('Checking model status at:', url);
+  // console.log('Checking model status at:', url);
   try {
     const response = await apiFetch(url, {
       method: 'GET',
     });
-    console.log('Model status response:', response);
+    // console.log('Model status response:', response);
     return response;
   } catch (error) {
     console.error('Failed to get model status - URL:', url, 'Error:', error.message);
@@ -199,12 +199,12 @@ export const getModelStatus = async () => {
 
 export const reclassifyImage = async (uploadId) => {
   const url = `/images/reclassify/${uploadId}`;
-  console.log('Reclassifying image at:', url);
+  // console.log('Reclassifying image at:', url);
   try {
     const response = await apiFetch(url, {
       method: 'POST',
     });
-    console.log('Reclassify response:', response);
+    // console.log('Reclassify response:', response);
     return response;
   } catch (error) {
     console.error('Failed to reclassify image - URL:', url, 'Error:', error.message);
@@ -214,12 +214,12 @@ export const reclassifyImage = async (uploadId) => {
 
 export const getClassificationResult = async (uploadId) => {
   const url = `/images/classification/${uploadId}`;
-  console.log('Getting classification result from:', url);
+  // console.log('Getting classification result from:', url);
   try {
     const response = await apiFetch(url, {
       method: 'GET',
     });
-    console.log('Classification result response:', response);
+    // console.log('Classification result response:', response);
     return response;
   } catch (error) {
     console.error('Failed to get classification result - URL:', url, 'Error:', error.message);
@@ -229,12 +229,12 @@ export const getClassificationResult = async (uploadId) => {
 
 export const testClassification = async (imagePath, debug = true) => {
   const url = `/images/test-classification?image_path=${encodeURIComponent(imagePath)}&debug=${debug}`;
-  console.log('Testing classification at:', url);
+  // console.log('Testing classification at:', url);
   try {
     const response = await apiFetch(url, {
       method: 'POST',
     });
-    console.log('Test classification response:', response);
+    // console.log('Test classification response:', response);
     return response;
   } catch (error) {
     console.error('Failed to test classification - URL:', url, 'Error:', error.message);
@@ -244,12 +244,12 @@ export const testClassification = async (imagePath, debug = true) => {
 
 export const clearModelCache = async () => {
   const url = '/images/clear-model-cache';
-  console.log('Clearing model cache at:', url);
+  // console.log('Clearing model cache at:', url);
   try {
     const response = await apiFetch(url, {
       method: 'POST',
     });
-    console.log('Clear cache response:', response);
+    // console.log('Clear cache response:', response);
     return response;
   } catch (error) {
     console.error('Failed to clear model cache - URL:', url, 'Error:', error.message);

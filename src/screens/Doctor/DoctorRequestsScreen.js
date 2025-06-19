@@ -126,6 +126,7 @@ const DoctorRequestsScreen = () => {
 
   const renderRequestCard = ({ item: request }) => {
           const uri = `${BASE_URL}/${request.file_path}`;
+          console.log(uri);
           return (
             <TouchableOpacity
               key={request.id}
@@ -211,13 +212,13 @@ const DoctorRequestsScreen = () => {
         <View style={styles.statCard}>
           <Ionicons name="checkmark-circle" size={24} color="#28A745" />
           <Text style={[styles.statNumber, { color: '#28A745' }]}>{statistics.approved}</Text>
-          <Text style={styles.statLabel}>Onaylanan</Text>
+          <Text style={styles.statLabel}>Onay</Text>
         </View>
         
         <View style={styles.statCard}>
           <Ionicons name="close-circle" size={24} color="#DC3545" />
           <Text style={[styles.statNumber, { color: '#DC3545' }]}>{statistics.rejected}</Text>
-          <Text style={styles.statLabel}>Reddedilen</Text>
+          <Text style={styles.statLabel}>Ret</Text>
         </View>
         
         <View style={styles.statCard}>

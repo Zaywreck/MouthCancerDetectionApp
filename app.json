@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "MouthCancerDetectionApp",
-    "slug": "MouthCancerDetectionApp",
+    "name": "OralHealth-AI",
+    "slug": "oralhealth-ai",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "permissions": [
@@ -12,26 +12,44 @@
       "media_library"
     ],
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "samsun.oralhealthai.app",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Bu uygulama ağız ve diş görüntülerini çekerek kanser riski taraması yapmak için kameraya erişim ihtiyacı duyar. Çekilen fotoğraflar yapay zeka modeli tarafından analiz edilir.",
+        "NSPhotoLibraryUsageDescription": "Bu uygulama galeri'nizden mevcut ağız ve diş fotoğraflarını seçerek kanser riski taraması yapmak için fotoğraf galerinize erişim ihtiyacı duyar. Seçilen fotoğraflar yapay zeka modeli tarafından analiz edilir.",
+        "NSPhotoLibraryAddUsageDescription": "Bu uygulama analiz sonuçlarını kaydetmek için fotoğrafları galerinize ekleme izni gerektirir."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
       },
       "usesCleartextTraffic": true,
+      "package": "samsun.oralhealthai.app",
+      "versionCode": 1,
       "permissions": [
         "INTERNET",
-        "ACCESS_NETWORK_STATE"
+        "ACCESS_NETWORK_STATE",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3d0aa06b-f9d5-4e86-9fc7-29bd17abe406"
+      }
+    },
+    "owner": "zaywreck"
   }
 }

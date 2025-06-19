@@ -1,24 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
-
-const teamMembers = [
-  {
-    name: 'Mert Gülle',
-    role: 'Danışman Hoca',
-    image: require('../../../assets/images/ass.jpg'),
-  },
-  {
-    name: 'Mert Gülle',
-    role: 'Yapay Zeka Geliştiricisi',
-    image: require('../../../assets/images/ass.jpg'),
-  },
-  {
-    name: 'Mert Gülle',
-    role: 'Mobil Uygulama Geliştiricisi',
-    image: require('../../../assets/images/ass.jpg'),
-  },
-];
 
 const AboutScreen = () => {
   return (
@@ -27,12 +8,14 @@ const AboutScreen = () => {
       <View style={styles.infoCard}>
         <Text style={styles.projectTitle}>Ağız Kanseri Erken Teşhis Projesi</Text>
         <Text style={styles.paragraph}>
-          Bu proje, Samsun Üniversitesi öğrencileri tarafından geliştirilmiştir. Danışman hocamız
-          <Text style={styles.bold}> Muammer Türkoğlu</Text> rehberliğinde yürütülen bu çalışma, TÜSEB tarafından desteklenmektedir.
+          OralHealth-AI, Samsun, Fırat ve Mersin Üniversitesi
+          öğrencisi ve öğretim üyesi tarafından geliştirilmiştir.
+          Bu proje, ağız kanserini erken teşhis edebilmek ve ağız
+          sağlığı konusunda toplumu bilinçlendirmek amacıyla hayata geçirilmiştir.
         </Text>
         <Text style={styles.paragraph}>
-          Yapay zeka destekli bu sistem, ağız kanseri gibi ciddi hastalıkların erken teşhis edilmesine yardımcı olmayı
-          amaçlamaktadır. Sağlık kuruluşları, doktorlar ve araştırmacılar için faydalı bir araç olmayı hedefliyoruz.
+        Türkiye Sağlık Enstitüleri Başkanlığı (TÜSEB) tarafından desteklenen projemiz, yapay zeka teknolojilerini kullanarak ağız sağlığı alanında yenilikçi bir çözüm sunmaktadır.
+        Sağlık kuruluşları, doktorlar ve araştırmacılar için faydalı bir araç olmayı hedefliyoruz.
         </Text>
         <Text style={styles.paragraph}>
           Amacımız, teknolojiyi sağlık alanında etkin bir şekilde kullanarak insanların yaşam kalitesini artırmaktır.
@@ -55,21 +38,34 @@ const AboutScreen = () => {
       {/* Divider */}
       <View style={styles.divider} />
 
-      {/* Team Members Slider */}
-      <Text style={[styles.subtitle, { marginTop: 30 }]}>Projede Emeği Geçenler</Text>
-      <Carousel
-        data={teamMembers}
-        renderItem={({ item }) => (
-          <View style={styles.carouselItem}>
-            <Image source={item.image} style={styles.teamImage} />
-            <Text style={styles.teamName}>{item.name}</Text>
-            <Text style={styles.teamRole}>{item.role}</Text>
+      {/* Proje Ekibi */}
+      <Text style={[styles.subtitle, { marginTop: 30, marginBottom: 20 }]}>Proje Ekibi</Text>
+      <View style={styles.teamGrid}>
+        {/* Öğretim Üyeleri */}
+        <View style={[styles.teamCard, { borderColor: '#2563eb' }]}>
+          <Text style={[styles.teamCardTitle, { color: '#2563eb' }]}>Öğretim Üyeleri</Text>
+          <View style={styles.memberList}>
+            <View style={styles.memberItem}><Text style={styles.memberName}>Prof. Dr. Abdulkadir Şengür</Text></View>
+            <View style={styles.memberItem}><Text style={styles.memberName}>Doç. Dr. Muammer Türkoğlu</Text></View>
+            <View style={styles.memberItem}><Text style={styles.memberName}>Doç. Dr. Adalet Çelebi</Text></View>
+            <View style={styles.memberItem}><Text style={styles.memberName}>Dt. Yağmur Ölmez</Text></View>
           </View>
-        )}
-        sliderWidth={350}
-        itemWidth={300}
-        activeSlideAlignment="start"
-      />
+        </View>
+        {/* Araştırma Görevlisi */}
+        <View style={[styles.teamCard, { borderColor: '#16a34a' }]}>
+          <Text style={[styles.teamCardTitle, { color: '#16a34a' }]}>Araştırma Görevlisi</Text>
+          <View style={styles.memberList}>
+            <View style={styles.memberItem}><Text style={styles.memberName}>Arş. Gör. Deniz Bora Küçük</Text></View>
+          </View>
+        </View>
+        {/* Öğrenci */}
+        <View style={[styles.teamCard, { borderColor: '#7c3aed' }]}>
+          <Text style={[styles.teamCardTitle, { color: '#7c3aed' }]}>Öğrenci</Text>
+          <View style={styles.memberList}>
+            <View style={styles.memberItem}><Text style={styles.memberName}>Mert Gülle</Text></View>
+          </View>
+        </View>
+      </View>
     </ScrollView>
   );
 };
@@ -144,38 +140,45 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginRight: 7,
   },
-  carouselItem: {
-    alignItems: 'center',
+  // Team section styles
+  teamGrid: {
+    flexDirection: 'column',
+    gap: 18,
+    marginBottom: 30,
+  },
+  teamCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    padding: 28,
-    elevation: 8,
-    shadowColor: '#007BFF',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.10,
-    shadowRadius: 12,
-    marginBottom: 25,
-    marginHorizontal: 10,
-  },
-  teamImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 10,
+    padding: 18,
+    marginBottom: 18,
     borderWidth: 2,
-    borderColor: '#007BFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
   },
-  teamName: {
+  teamCardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#007BFF',
-    marginBottom: 5,
+    marginBottom: 12,
+    textAlign: 'center',
     letterSpacing: 0.5,
   },
-  teamRole: {
+  memberList: {
+    gap: 8,
+  },
+  memberItem: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 6,
+    alignItems: 'center',
+  },
+  memberName: {
     fontSize: 16,
-    color: '#6C757D',
-    fontStyle: 'italic',
+    color: '#222',
+    fontWeight: '500',
   },
 });
 
